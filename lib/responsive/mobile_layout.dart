@@ -16,7 +16,7 @@ class Mobile extends StatefulWidget {
 }
 
 class _MobileState extends State<Mobile> {
-  List<Widget> pages = const [Home(), Job(), Notfication(), Profile()];
+  List<Widget> pages =  [Home(), Job(), Notfication(), Profile()];
 
   @override
   Widget build(BuildContext context) {

@@ -45,12 +45,14 @@ class _LoginState extends State<Login> {
   void checkUserStatus() async {
     //we need to instantiate the shared preference
     loginData = await SharedPreferences.getInstance();
-    setState(() {
-      isLoggedIn = loginData!.getBool('loggedIn');
-    });
+    if (loginData != null) {
+      setState(() {
+        isLoggedIn = (loginData?.getBool('loggedIn') ?? true);
+      });
 
-    if (isLoggedIn!) {
-      goHome();
+      if (isLoggedIn!) {
+        goHome();
+      }
     }
   }
 
@@ -118,7 +120,10 @@ class _LoginState extends State<Login> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 alignment: Alignment.center,
-                child: Text(_result.exception!.graphqlErrors.first.message),
+                child: _result.exception!.graphqlErrors.first.message ==
+                        "http exception when calling webhook"
+                    ? const Text("Sorry server is not working please try again")
+                    : Text(_result.exception!.graphqlErrors.first.message),
               ),
             ),
           ),
