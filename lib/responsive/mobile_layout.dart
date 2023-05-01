@@ -8,6 +8,8 @@ import 'package:technician_rensys/screens/job_screen.dart';
 import 'package:technician_rensys/screens/notfication_screen.dart';
 import 'package:technician_rensys/screens/profile_screen.dart';
 
+import '../constatnts/colors.dart';
+
 class Mobile extends StatefulWidget {
   const Mobile({super.key});
 
@@ -26,7 +28,7 @@ class _MobileState extends State<Mobile> {
           body: pages[pageIndex.pageIndex],
           bottomNavigationBar: SafeArea(
               child: SlidingClippedNavBar(
-            activeColor: Colors.red,
+            activeColor: darkBlue,
             selectedIndex: pageIndex.pageIndex,
             onButtonPressed: (index) {
               pageIndex.navigateTo(index);
@@ -35,7 +37,7 @@ class _MobileState extends State<Mobile> {
             barItems: [
               BarItem(title: "Home", icon: Icons.home),
               BarItem(title: "Job", icon: Icons.work),
-              BarItem(title: "Notification", icon: Icons.notifications),
+              BarItem(title: "Alert", icon: Icons.notifications),
               BarItem(title: "Profile", icon: Icons.person),
             ],
           )),

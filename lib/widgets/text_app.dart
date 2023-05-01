@@ -16,7 +16,7 @@ class TextApp extends StatelessWidget {
     return Text(
       title,
       style:
-          TextStyle(fontSize: size, fontWeight: weight, fontFamily: "poppins"),
+          TextStyle(fontSize: size, fontWeight: weight, fontFamily: "roboto"),
     );
   }
 }

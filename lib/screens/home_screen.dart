@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:technician_rensys/providers/page_index.dart';
+import 'package:technician_rensys/services/main_service.dart';
+import 'package:technician_rensys/widgets/text_app.dart';
 import '../providers/job_list.dart';
 import '../services/graphql_service.dart';
+import '../models/job.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -14,9 +19,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  // SharedPreferences? loginData;
+  // String accessToken = '';
+  final _graphqlService = MainService(JobList());
   QueryResult? result;
-  final _graphql_service = GraphQLService();
-  List jobs = [];
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -25,29 +32,47 @@ class _HomeState extends State<Home> {
   }
 
   void _loadJob() async {
-    QueryResult _result = await _graphql_service.getJob();
     setState(() {
-      result = _result;
-      jobs = result!.data!["jobs"];
-
+      isLoading = true; 
     });
-    seeData();
-  }
-
-  void seeData(){
-    jobs.forEach((e) => print(e["customer_phone"]));
+    QueryResult _result = await _graphqlService.getJob(context);
+    setState(() {
+      result = result;
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final jobList = Provider.of<JobList>(context);
-
-
-
-    return const Scaffold(
-      body: Center(
-        child: Text("This is home Screen"),
-      ),
-    );
+    return Consumer<JobList>(builder: (context, jobList, child) {
+      final jobsData = jobList.jobList;
+      return Scaffold(
+        body: isLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
+                  child: Column(
+                    children: [
+                      TextApp(
+                        title: jobsData[0].description,
+                        size: 24,
+                        weight: FontWeight.bold,
+                      ),
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text("click Me"),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+      );
+    });
   }
 }

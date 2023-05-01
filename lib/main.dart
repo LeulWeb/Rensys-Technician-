@@ -9,9 +9,11 @@ import 'package:technician_rensys/responsive/responsive_layout.dart';
 import 'package:provider/provider.dart';
 import 'package:technician_rensys/screens/home_screen.dart';
 import 'package:technician_rensys/screens/login_screen.dart';
+import './services/graphql_client.dart';
 
 void main(List<String> args) async {
   await initHiveForFlutter();
+  GraphQLConfig.getAccessToken();
   runApp(const MyApp());
 }
 
@@ -22,9 +24,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => PageIndex()),
-        ChangeNotifierProvider(
-          create: (context) => JobList(),
-        ),
+        ChangeNotifierProvider(create: (_) => JobList())
       ],
       child: MaterialApp(
         //Defining custom theme

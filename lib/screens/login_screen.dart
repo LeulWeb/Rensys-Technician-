@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:technician_rensys/constatnts/colors.dart';
+import 'package:technician_rensys/providers/job_list.dart';
 import 'package:technician_rensys/responsive/mobile_layout.dart';
 
 import 'package:technician_rensys/services/graphql_service.dart';
