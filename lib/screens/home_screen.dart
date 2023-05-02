@@ -8,6 +8,10 @@ import 'package:technician_rensys/widgets/text_app.dart';
 import '../providers/job_list.dart';
 import '../services/graphql_service.dart';
 import '../models/job.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:intl/intl.dart';
+
+import 'job_screen.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -33,7 +37,7 @@ class _HomeState extends State<Home> {
 
   void _loadJob() async {
     setState(() {
-      isLoading = true; 
+      isLoading = true;
     });
     QueryResult _result = await _graphqlService.getJob(context);
     setState(() {
@@ -58,15 +62,39 @@ class _HomeState extends State<Home> {
                     vertical: 8.0,
                   ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       TextApp(
-                        title: jobsData[0].description,
+                        title: "Home",
                         size: 24,
                         weight: FontWeight.bold,
                       ),
-                      TextButton(
-                        onPressed: () {},
-                        child: const Text("click Me"),
+
+                      const SizedBox(
+                        height: 22,
+                      ),
+                      const TextApp(
+                        title: "New Jobs",
+                        size: 20,
+                        weight: FontWeight.normal,
+                      ),
+                      //Working with the carousel
+
+                      const SizedBox(
+                        height: 22,
+                      ),
+                      CarouselSlider(
+                        options: CarouselOptions(
+                            height: MediaQuery.of(context).size.height * 0.30),
+                        items: jobsData.map((job) {
+                          return Builder(
+                            builder: (BuildContext context) {
+                              return CarouselCard(
+                                job: job,
+                              );
+                            },
+                          );
+                        }).toList(),
                       )
                     ],
                   ),
@@ -74,5 +102,102 @@ class _HomeState extends State<Home> {
               ),
       );
     });
+  }
+}
+
+class CarouselCard extends StatelessWidget {
+  final JobModel job;
+  const CarouselCard({
+    super.key,
+    required this.job,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          width: MediaQuery.of(context).size.width,
+          margin: const EdgeInsets.symmetric(horizontal: 2),
+          decoration: const BoxDecoration(color: Colors.amber),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(child: Container()),
+              TextApp(
+                title: job.title,
+                weight: FontWeight.bold,
+                size: 18,
+              ),
+
+              const SizedBox(
+                height: 12,
+              ),
+              Expanded(child: Container()),
+
+              Text(
+                job.description.length >= 50
+                    ? job.description.substring(50)
+                    : job.description,
+                textAlign: TextAlign.justify,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              // TextApp(
+              //   title: job.description.length >= 50
+              //       ? job.description.substring(50)
+              //       : job.description,
+              //   size: 12,
+              //   weight: FontWeight.normal,
+              // ),
+              // const SizedBox(
+              //   height: 12,
+              // ),
+              Expanded(child: Container()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  //Displaying date of request
+                  Row(
+                    children: [
+                      const Icon(Icons.date_range),
+                      TextApp(
+                        title: DateFormat('dd/MM/yyyy')
+                            .format(DateTime.parse(job.requestedDate)),
+                        weight: FontWeight.w300,
+                        size: 12,
+                      ),
+                    ],
+                  ),
+
+                  //Working with distance
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on_outlined),
+                      TextApp(
+                        title: "${job.distance.toString()} Far",
+                        weight: FontWeight.w300,
+                        size: 12,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Expanded(child: Container()),
+              Container(
+                alignment: Alignment.bottomRight,
+                child: IconButton(
+                  onPressed: () {
+                    // Navigator.of(context).pushNamed(Job.jobRoute);
+                  },
+                  icon: const Icon(Icons.arrow_forward),
+                ),
+              )
+            ],
+          )),
+    );
   }
 }

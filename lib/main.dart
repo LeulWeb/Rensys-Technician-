@@ -8,6 +8,7 @@ import 'package:technician_rensys/responsive/mobile_layout.dart';
 import 'package:technician_rensys/responsive/responsive_layout.dart';
 import 'package:provider/provider.dart';
 import 'package:technician_rensys/screens/home_screen.dart';
+import 'package:technician_rensys/screens/job_screen.dart';
 import 'package:technician_rensys/screens/login_screen.dart';
 import './services/graphql_client.dart';
 
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         home: const Login(),
         routes: {
           Home.homeRoute: (context) => const Home(),
+          Job.jobRoute: (context) => const Job(),
         },
       ),
     );
