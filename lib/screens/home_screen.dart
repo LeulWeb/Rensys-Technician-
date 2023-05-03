@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 
 import 'job_screen.dart';
 
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -51,8 +52,16 @@ class _HomeState extends State<Home> {
     return Consumer<JobList>(builder: (context, jobList, child) {
       final jobsData = jobList.jobList;
       return Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "Home",
+            style: TextStyle(color: Colors.black),
+          ),
+          elevation: 0,
+          backgroundColor: Color.fromRGBO(255, 255, 255, 0),
+        ),
         body: isLoading
-            ? Center(
+            ? const Center(
                 child: CircularProgressIndicator(),
               )
             : SafeArea(
@@ -64,15 +73,15 @@ class _HomeState extends State<Home> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TextApp(
-                        title: "Home",
-                        size: 24,
-                        weight: FontWeight.bold,
-                      ),
+                      // TextApp(
+                      //   title: "Home",
+                      //   size: 24,
+                      //   weight: FontWeight.bold,
+                      // ),
 
-                      const SizedBox(
-                        height: 22,
-                      ),
+                      // const SizedBox(
+                      //   height: 22,
+                      // ),
                       const TextApp(
                         title: "New Jobs",
                         size: 20,
@@ -114,6 +123,8 @@ class CarouselCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      final index = Provider.of<PageIndex>(context);
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(18),
       child: Container(
@@ -191,7 +202,7 @@ class CarouselCard extends StatelessWidget {
                 alignment: Alignment.bottomRight,
                 child: IconButton(
                   onPressed: () {
-                    // Navigator.of(context).pushNamed(Job.jobRoute);
+                    index.navigateTo(1);
                   },
                   icon: const Icon(Icons.arrow_forward),
                 ),
