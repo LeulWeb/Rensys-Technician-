@@ -6,9 +6,15 @@ import 'package:technician_rensys/providers/page_index.dart';
 import 'package:technician_rensys/screens/home_screen.dart';
 import 'package:technician_rensys/screens/job_screen.dart';
 import 'package:technician_rensys/screens/notfication_screen.dart';
+import 'package:technician_rensys/screens/ongoing_screen.dart';
 import 'package:technician_rensys/screens/profile_screen.dart';
+import 'package:technician_rensys/screens/recent_screen.dart';
+import 'package:technician_rensys/screens/report_screen.dart';
+import 'package:technician_rensys/screens/request_screen.dart';
+import 'package:technician_rensys/screens/rewared_screen.dart';
 
-import '../constatnts/colors.dart';
+import '../constants/colors.dart';
+import '../screens/completed_screen.dart';
 
 class Mobile extends StatefulWidget {
   const Mobile({super.key});
@@ -18,7 +24,7 @@ class Mobile extends StatefulWidget {
 }
 
 class _MobileState extends State<Mobile> {
-  List<Widget> pages =  [Home(), Job(), Notfication(), Profile()];
+  List<Widget> pages =  const [Home(), Job(), NotificationScreen(), Profile(),  CompletedScreen(), Progress(), Recent(),Report(),Request() , Reward()];
 
   @override
   Widget build(BuildContext context) {

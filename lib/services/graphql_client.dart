@@ -29,6 +29,8 @@ class GraphQLConfig {
 
   GraphQLClient clientToQuery() => GraphQLClient(
         link: link,
-        cache: GraphQLCache(store: HiveStore()),
+        cache: GraphQLCache(),
       );
 }
+
+//store: HiveStore(),

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:technician_rensys/constatnts/colors.dart';
+import 'package:technician_rensys/constants/colors.dart';
 import 'package:technician_rensys/providers/job_list.dart';
 import 'package:technician_rensys/providers/page_index.dart';
-import 'package:technician_rensys/responsive/mobile_layout.dart';
-import 'package:technician_rensys/responsive/responsive_layout.dart';
 import 'package:provider/provider.dart';
 import 'package:technician_rensys/screens/home_screen.dart';
 import 'package:technician_rensys/screens/job_screen.dart';
@@ -30,7 +27,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         //Defining custom theme
         theme: ThemeData().copyWith(
+          useMaterial3: true,
           scaffoldBackgroundColor: lightBackground,
+          // appBarTheme: AppBarTheme().copyWith(color: Colors.red),
         ),
         darkTheme: ThemeData.dark().copyWith(
           scaffoldBackgroundColor: darkBackground,

@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:lottie/lottie.dart';
-import 'package:technician_rensys/constatnts/colors.dart';
-import 'package:technician_rensys/providers/job_list.dart';
-import 'package:technician_rensys/responsive/mobile_layout.dart';
-
+import 'package:technician_rensys/constants/colors.dart';
 import 'package:technician_rensys/services/graphql_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../responsive/responsive_layout.dart';
 import '../widgets/text_app.dart';
-import 'home_screen.dart';
 
 //Working with shared preference
 
@@ -21,11 +17,9 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  static const loginRoute = "/login";
-
   String phoneNumber = '';
   String password = '';
-  final _graphql_service = GraphQLService();
+  final graphqlService = GraphQLService();
   final FocusNode _passwordFocus = FocusNode();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isLoading = false;
@@ -103,11 +97,10 @@ class _LoginState extends State<Login> {
         );
       });
 
-      final QueryResult _result =
-          await _graphql_service.login(phone: phoneNumber, password: password);
+      final QueryResult resultQuery =
+          await graphqlService.login(phone: phoneNumber, password: password);
 
-      if (_result.hasException) {
-        print(_result.exception?.graphqlErrors.first.message);
+      if (resultQuery.hasException) {
         setState(() {
           isLoading = false;
         });
@@ -121,10 +114,10 @@ class _LoginState extends State<Login> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 alignment: Alignment.center,
-                child: _result.exception!.graphqlErrors.first.message ==
+                child: resultQuery.exception!.graphqlErrors.first.message ==
                         "http exception when calling webhook"
                     ? const Text("Sorry server is not working please try again")
-                    : Text(_result.exception!.graphqlErrors.first.message),
+                    : Text(resultQuery.exception!.graphqlErrors.first.message),
               ),
             ),
           ),
@@ -134,7 +127,7 @@ class _LoginState extends State<Login> {
       }
 
       setState(() {
-        result = _result;
+        result = resultQuery;
       });
 
       //setting the shared preference
@@ -152,7 +145,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return isLoggedIn!
-        ? Responsive()
+        ? const Responsive()
         : Scaffold(
             body: SafeArea(
               child: Center(
@@ -278,7 +271,7 @@ class _LoginState extends State<Login> {
 
                               isLoading
                                   ? Center(
-                                      child: Container(
+                                      child: SizedBox(
                                         width: 100,
                                         child: Lottie.asset(
                                             "assets/images/loading.json"),

@@ -33,7 +33,7 @@ class GraphQLService {
       //   print(result.exception!.graphqlErrors);
       //   throw Exception(result.exception);
       // }
-
+      print(result);
       return result;
     } catch (error) {
       throw Exception(error);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Rewared extends StatelessWidget {
-  const Rewared({super.key});
+class Reward extends StatelessWidget {
+  const Reward({super.key});
 
 
   //Route 

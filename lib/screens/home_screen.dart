@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:technician_rensys/constants/colors.dart';
 import 'package:technician_rensys/providers/page_index.dart';
 import 'package:technician_rensys/services/main_service.dart';
+import 'package:technician_rensys/widgets/action_card.dart';
 import 'package:technician_rensys/widgets/text_app.dart';
 import '../providers/job_list.dart';
 import '../services/graphql_service.dart';
@@ -11,8 +14,8 @@ import '../models/job.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:intl/intl.dart';
 
+import '../widgets/carousel_card.dart';
 import 'job_screen.dart';
-
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -26,7 +29,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   // SharedPreferences? loginData;
   // String accessToken = '';
-  final _graphqlService = MainService(JobList());
+  final _graphqlService = MainService();
   QueryResult? result;
   bool isLoading = false;
 
@@ -55,10 +58,7 @@ class _HomeState extends State<Home> {
         appBar: AppBar(
           title: const Text(
             "Home",
-            style: TextStyle(color: Colors.black),
           ),
-          elevation: 0,
-          backgroundColor: Color.fromRGBO(255, 255, 255, 0),
         ),
         body: isLoading
             ? const Center(
@@ -73,15 +73,6 @@ class _HomeState extends State<Home> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // TextApp(
-                      //   title: "Home",
-                      //   size: 24,
-                      //   weight: FontWeight.bold,
-                      // ),
-
-                      // const SizedBox(
-                      //   height: 22,
-                      // ),
                       const TextApp(
                         title: "New Jobs",
                         size: 20,
@@ -92,123 +83,127 @@ class _HomeState extends State<Home> {
                       const SizedBox(
                         height: 22,
                       ),
-                      CarouselSlider(
-                        options: CarouselOptions(
-                            height: MediaQuery.of(context).size.height * 0.30),
-                        items: jobsData.map((job) {
-                          return Builder(
-                            builder: (BuildContext context) {
-                              return CarouselCard(
-                                job: job,
-                              );
-                            },
-                          );
-                        }).toList(),
-                      )
+
+                      jobList.jobList.isEmpty
+                          ? Center(
+                              child: Container(
+                                child: Column(
+                                  children: [
+                                    Lottie.asset("assets/images/emptyHome.json",
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.25),
+                                    const Text(
+                                        "We regret to inform you that there are no new jobs available for you at this time.")
+                                  ],
+                                ),
+                              ),
+                            )
+                          : CarouselSlider(
+                              options: CarouselOptions(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.30),
+                              items: jobsData.map((job) {
+                                return Builder(
+                                  builder: (BuildContext context) {
+                                    return CarouselCard(
+                                      job: job,
+                                    );
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      const TextApp(
+                        title: "My Work",
+                        size: 20,
+                        weight: FontWeight.normal,
+                      ),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      //The Grid Components
+                      Expanded(
+                        child: Consumer<PageIndex>(
+                          builder: (context, value, child) => GridView(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 5,
+                              mainAxisSpacing: 5,
+                              childAspectRatio: 5 / 4,
+                            ),
+                            children: [
+                              ActionCard(
+                                  goTo: () {
+                                    value.navigateTo(5);
+                                  },
+                                  color: orange,
+                                  ActionIcon: const Icon(
+                                    Icons.hourglass_bottom_rounded,
+                                    size: 50,
+                                  ),
+                                  title: "Pending",
+                                  description: "Track in-progress"),
+                              ActionCard(
+                                  goTo: () {
+                                    value.navigateTo(4);
+                                  },
+                                  color: Colors.red,
+                                  ActionIcon: const Icon(
+                                    Icons.check_circle_outline_outlined,
+                                    size: 50,
+                                  ),
+                                  title: "Finished",
+                                  description: "View finished tasks."),
+                              ActionCard(
+                                  goTo: () {
+                                    value.navigateTo(9);
+                                  },
+                                  color: Colors.red,
+                                  ActionIcon: const Icon(
+                                    Icons.star,
+                                    size: 50,
+                                  ),
+                                  title: "Milestones",
+                                  description: "See your impact"),
+                              ActionCard(
+                                goTo: () {
+                                  value.navigateTo(6);
+                                },
+                                color: Colors.red,
+                                title: "Recent",
+                                ActionIcon: const Icon(
+                                  Icons.access_time,
+                                  size: 50,
+                                ),
+                                description: "View recent tasks.",
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // const TextApp(
+                      //   title: "Packages",
+                      //   size: 20,
+                      //   weight: FontWeight.normal,
+                      // ),
+                      // const SizedBox(
+                      //   height: 12,
+                      // ),
+                      // const Placeholder(
+                      //   fallbackHeight: 100,
+                      // ),
+                      // const SizedBox(
+                      //   height: 12,
+                      // ),
                     ],
                   ),
                 ),
               ),
       );
     });
-  }
-}
-
-class CarouselCard extends StatelessWidget {
-  final JobModel job;
-  const CarouselCard({
-    super.key,
-    required this.job,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-      final index = Provider.of<PageIndex>(context);
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(18),
-      child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          width: MediaQuery.of(context).size.width,
-          margin: const EdgeInsets.symmetric(horizontal: 2),
-          decoration: const BoxDecoration(color: Colors.amber),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(child: Container()),
-              TextApp(
-                title: job.title,
-                weight: FontWeight.bold,
-                size: 18,
-              ),
-
-              const SizedBox(
-                height: 12,
-              ),
-              Expanded(child: Container()),
-
-              Text(
-                job.description.length >= 50
-                    ? job.description.substring(50)
-                    : job.description,
-                textAlign: TextAlign.justify,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-              // TextApp(
-              //   title: job.description.length >= 50
-              //       ? job.description.substring(50)
-              //       : job.description,
-              //   size: 12,
-              //   weight: FontWeight.normal,
-              // ),
-              // const SizedBox(
-              //   height: 12,
-              // ),
-              Expanded(child: Container()),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  //Displaying date of request
-                  Row(
-                    children: [
-                      const Icon(Icons.date_range),
-                      TextApp(
-                        title: DateFormat('dd/MM/yyyy')
-                            .format(DateTime.parse(job.requestedDate)),
-                        weight: FontWeight.w300,
-                        size: 12,
-                      ),
-                    ],
-                  ),
-
-                  //Working with distance
-                  Row(
-                    children: [
-                      const Icon(Icons.location_on_outlined),
-                      TextApp(
-                        title: "${job.distance.toString()} Far",
-                        weight: FontWeight.w300,
-                        size: 12,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Expanded(child: Container()),
-              Container(
-                alignment: Alignment.bottomRight,
-                child: IconButton(
-                  onPressed: () {
-                    index.navigateTo(1);
-                  },
-                  icon: const Icon(Icons.arrow_forward),
-                ),
-              )
-            ],
-          )),
-    );
   }
 }

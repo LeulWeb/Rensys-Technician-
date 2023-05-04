@@ -28,6 +28,9 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Profile"),
+      ),
       body: Center(
           child: TextButton(
         child: const Text("Log Out"),
