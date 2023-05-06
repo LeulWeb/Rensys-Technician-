@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:technician_rensys/constants/colors.dart';
 import 'package:technician_rensys/providers/page_index.dart';
+import 'package:technician_rensys/providers/service_list.dart';
+
 import 'package:technician_rensys/services/main_service.dart';
 import 'package:technician_rensys/widgets/action_card.dart';
+import 'package:technician_rensys/widgets/custom_badge.dart';
 import 'package:technician_rensys/widgets/text_app.dart';
 import '../providers/job_list.dart';
-import '../services/graphql_service.dart';
-import '../models/job.dart';
+
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:intl/intl.dart';
 
 import '../widgets/carousel_card.dart';
-import 'job_screen.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -44,6 +44,9 @@ class _HomeState extends State<Home> {
       isLoading = true;
     });
     QueryResult _result = await _graphqlService.getJob(context);
+    _graphqlService.getService(context, "progress");
+    _graphqlService.getService(context, "completed");
+
     setState(() {
       result = result;
       isLoading = false;
@@ -52,6 +55,10 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    int progressCount = Provider.of<ServiceList>(context).serviceList.length;
+    final int completedCount =
+        Provider.of<ServiceList>(context).completedServiceList.length;
+
     return Consumer<JobList>(builder: (context, jobList, child) {
       final jobsData = jobList.jobList;
       return Scaffold(
@@ -137,6 +144,8 @@ class _HomeState extends State<Home> {
                             ),
                             children: [
                               ActionCard(
+                                  custom_badge:
+                                      CustomBadge(number: progressCount),
                                   goTo: () {
                                     value.navigateTo(5);
                                   },
@@ -148,6 +157,7 @@ class _HomeState extends State<Home> {
                                   title: "Pending",
                                   description: "Track in-progress"),
                               ActionCard(
+                                  custom_badge: null,
                                   goTo: () {
                                     value.navigateTo(4);
                                   },
@@ -159,6 +169,7 @@ class _HomeState extends State<Home> {
                                   title: "Finished",
                                   description: "View finished tasks."),
                               ActionCard(
+                                  custom_badge: null,
                                   goTo: () {
                                     value.navigateTo(9);
                                   },
@@ -170,6 +181,7 @@ class _HomeState extends State<Home> {
                                   title: "Milestones",
                                   description: "See your impact"),
                               ActionCard(
+                                custom_badge: null,
                                 goTo: () {
                                   value.navigateTo(6);
                                 },

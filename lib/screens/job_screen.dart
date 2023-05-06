@@ -56,24 +56,20 @@ class _JobState extends State<Job> {
                 size: 16,
               ),
               jobList.jobList.isEmpty
-                  ? Expanded(
-                      child: Center(
-                        child: Container(
-                          child: Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Lottie.asset(
-                                  "assets/images/emptyJob.json",
-                                ),
-                                const Text(
-                                    "We regret to inform you that there are no new jobs available for you at this time."),
-                              ],
-                            ),
+                  ? Center(
+                    child: Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Lottie.asset(
+                            "assets/images/emptyJob.json",
                           ),
-                        ),
+                          const Text(
+                              "We regret to inform you that there are no new jobs available for you at this time."),
+                        ],
                       ),
-                    )
+                    ),
+                  )
                   :
                   //List view for the Jobs
                   Expanded(

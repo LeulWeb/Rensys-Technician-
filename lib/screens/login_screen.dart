@@ -37,6 +37,17 @@ class _LoginState extends State<Login> {
     checkUserStatus();
   }
 
+  @override
+  void dispose() {
+    _passwordFocus.dispose();
+    //dispose all the controllers
+
+    super.dispose();
+  }
+  
+
+
+
   void checkUserStatus() async {
     //we need to instantiate the shared preference
     loginData = await SharedPreferences.getInstance();
@@ -59,11 +70,6 @@ class _LoginState extends State<Login> {
     );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _passwordFocus.dispose();
-  }
 
   void _handleSubmit() async {
     final bool isValid = _formKey.currentState!.validate();
@@ -75,7 +81,7 @@ class _LoginState extends State<Login> {
         isLoading = true;
       });
 
-      Future.delayed(const Duration(seconds: 30), () {
+      
         setState(() {
           isLoading = false;
         });
@@ -95,7 +101,7 @@ class _LoginState extends State<Login> {
             ),
           ),
         );
-      });
+      
 
       final QueryResult resultQuery =
           await graphqlService.login(phone: phoneNumber, password: password);

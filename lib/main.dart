@@ -4,6 +4,7 @@ import 'package:technician_rensys/constants/colors.dart';
 import 'package:technician_rensys/providers/job_list.dart';
 import 'package:technician_rensys/providers/page_index.dart';
 import 'package:provider/provider.dart';
+import 'package:technician_rensys/providers/service_list.dart';
 import 'package:technician_rensys/screens/home_screen.dart';
 import 'package:technician_rensys/screens/job_screen.dart';
 import 'package:technician_rensys/screens/login_screen.dart';
@@ -22,7 +23,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => PageIndex()),
-        ChangeNotifierProvider(create: (_) => JobList())
+        ChangeNotifierProvider(create: (_) => JobList()),
+        ChangeNotifierProvider(create: (_) => ServiceList())
       ],
       child: MaterialApp(
         //Defining custom theme
