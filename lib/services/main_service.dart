@@ -8,7 +8,6 @@ import '../models/job.dart';
 import '../providers/job_list.dart';
 import 'graphql_client.dart';
 
-
 class MainService {
   static GraphQLConfig graphQLConfig = GraphQLConfig();
   GraphQLClient client = graphQLConfig.clientToQuery();
@@ -162,6 +161,38 @@ class MainService {
       if (serviceStatus == "completed") {
         myProvider.setCompleted(modelList);
       }
+
+      return result;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  //Submitting Form In Work progress
+
+  Future<QueryResult> reportWork({
+    required String serviceId,
+    required bool isCompleted,
+    required String problemDescription,
+    required String solutionDescription,
+  }) async {
+    const submitQuery = '''
+      mutation MyMutation(\$is_service_completed: Boolean, \$problem_diagnosis: String , \$service_req_id: uuid, \$solution_provided: String) {
+  insert_technician_report_one(object: {is_service_completed: \$is_service_completed, problem_diagnosis: \$problem_diagnosis, service_req_id: \$service_req_id, solution_provided: \$solution_provided}) {
+    id
+  }
+}
+    ''';
+
+    try {
+      QueryResult result = await client.mutate(
+        MutationOptions(document: gql(submitQuery), variables: {
+          "is_service_completed": isCompleted,
+          "problem_diagnosis": problemDescription,
+          "solution_provided": solutionDescription,
+          "service_req_id": serviceId,
+        }),
+      );
 
       return result;
     } catch (e) {

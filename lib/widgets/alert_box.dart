@@ -18,6 +18,7 @@ class AlertBox extends StatelessWidget {
     return AlertDialog(
       contentPadding: EdgeInsets.zero,
       content: Container(
+        alignment: Alignment.center,
         height: 200,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
@@ -32,7 +33,10 @@ class AlertBox extends StatelessWidget {
               ),
             ),
             Lottie.asset('assets/images/success.json', width: 100),
-            Text(description),
+            Text(
+              description,
+              textAlign: TextAlign.center,
+            ),
             Expanded(child: Container()),
           ],
         ),

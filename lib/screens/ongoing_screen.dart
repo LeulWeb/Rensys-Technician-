@@ -71,7 +71,10 @@ class _ProgressState extends State<Progress> {
               child: ListView.builder(
                 itemCount: serviceList.serviceList.length,
                 itemBuilder: (context, index) {
-                  return ServiceCard(service: serviceList.serviceList[index]);
+                  return ServiceCard(
+                    service: serviceList.serviceList[index],
+                    actionTitle: true,
+                  );
                 },
               ),
             )
