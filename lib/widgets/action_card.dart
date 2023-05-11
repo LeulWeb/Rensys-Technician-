@@ -3,21 +3,22 @@ import 'package:technician_rensys/widgets/custom_badge.dart';
 
 class ActionCard extends StatelessWidget {
   final Color color;
-  final Icon ActionIcon;
+  final Widget ActionIcon;
   final String title;
   final String description;
   final VoidCallback goTo;
   final Widget? custom_badge;
+  final List<Color> colors;
 
-  const ActionCard({
-    super.key,
-    required this.color,
-    required this.title,
-    required this.description,
-    required this.ActionIcon,
-    required this.goTo,
-    required this.custom_badge,
-  });
+  const ActionCard(
+      {super.key,
+      required this.color,
+      required this.title,
+      required this.description,
+      required this.ActionIcon,
+      required this.goTo,
+      required this.custom_badge,
+      required this.colors});
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +30,17 @@ class ActionCard extends StatelessWidget {
         },
         child: Container(
           decoration: BoxDecoration(
-            color: color,
-          ),
+              gradient:
+                  LinearGradient(colors: colors, begin: Alignment.topCenter)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(title),
+              Expanded(child: Container()),
+              Text(
+                title,
+                style: TextStyle(color: Colors.white),
+              ),
+              Expanded(child: Container()),
               Stack(
                 alignment: Alignment.center,
                 children: [
@@ -48,7 +54,12 @@ class ActionCard extends StatelessWidget {
                       : Container()
                 ],
               ),
-              Text(description),
+              Expanded(child: Container()),
+              Text(
+                description,
+                style: TextStyle(color: Colors.white),
+              ),
+              Expanded(child: Container()),
             ],
           ),
         ),

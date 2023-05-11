@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:super_banners/super_banners.dart';
 import 'package:technician_rensys/services/main_service.dart';
 import 'package:technician_rensys/widgets/alert_box.dart';
 import 'package:technician_rensys/widgets/text_app.dart';
@@ -81,50 +82,20 @@ class _JobCardState extends State<JobCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Stack(
-          children: [
-            if (widget.job.service.isWarranty)
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.green,
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.shield,
-                        color: Colors.white,
-                      ),
-                      Text(
-                        'Warranty',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: widget.job.service.isWarranty
-                              ? Colors.white
-                              : orange,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              )
-            else
-              Container(),
-
-            //
-            Column(
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextApp(
-                  title: widget.job.service.title,
-                  weight: FontWeight.bold,
-                  size: 20,
+                Align(
+                  alignment: Alignment.topRight,
+                  child: TextApp(
+                    title: widget.job.service.title,
+                    weight: FontWeight.bold,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(
                   height: 12,
@@ -194,8 +165,29 @@ class _JobCardState extends State<JobCard> {
                       )
               ],
             ),
-          ],
-        ),
+          ),
+          widget.job.service.isWarranty
+              ? Positioned(
+                  child: CornerBanner(
+                      bannerPosition: CornerBannerPosition.topLeft,
+                      bannerColor: Colors.green,
+                      child: IntrinsicWidth(
+                        child: Row(
+                          children: const [
+                            Icon(
+                              Icons.shield,
+                              color: Colors.white,
+                            ),
+                            Text(
+                              "Warranty",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      )),
+                )
+              : Container()
+        ],
       ),
     );
   }

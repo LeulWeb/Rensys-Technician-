@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:technician_rensys/constants/colors.dart';
+import 'package:technician_rensys/providers/bundle_package_provider.dart';
 import 'package:technician_rensys/providers/id_provider.dart';
 import 'package:technician_rensys/providers/job_list.dart';
 import 'package:technician_rensys/providers/page_index.dart';
@@ -26,7 +27,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => PageIndex()),
         ChangeNotifierProvider(create: (_) => JobList()),
         ChangeNotifierProvider(create: (_) => ServiceList()),
-        ChangeNotifierProvider(create: (_) => IDProvider())
+        ChangeNotifierProvider(create: (_) => IDProvider()),
+        ChangeNotifierProvider(create: (_)=> BundlePackageProvider())
       ],
       child: MaterialApp(
         //Defining custom theme

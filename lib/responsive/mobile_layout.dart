@@ -11,7 +11,7 @@ import 'package:technician_rensys/screens/profile_screen.dart';
 import 'package:technician_rensys/screens/recent_screen.dart';
 import 'package:technician_rensys/screens/report_screen.dart';
 import 'package:technician_rensys/screens/request_screen.dart';
-import 'package:technician_rensys/screens/rewared_screen.dart';
+import 'package:technician_rensys/screens/package_screen.dart';
 
 import '../constants/colors.dart';
 import '../screens/completed_screen.dart';
@@ -24,7 +24,18 @@ class Mobile extends StatefulWidget {
 }
 
 class _MobileState extends State<Mobile> {
-  List<Widget> pages =  const [Home(), Job(), NotificationScreen(), Profile(),  CompletedScreen(), Progress(), Recent(),Report(),Request() , Reward()];
+  List<Widget> pages = const [
+    Home(),
+    Job(),
+    NotificationScreen(),
+    Profile(),
+    CompletedScreen(),
+    Progress(),
+    Recent(),
+    Report(),
+    Request(),
+    BuyCoin(),
+  ];
 
   @override
   Widget build(BuildContext context) {

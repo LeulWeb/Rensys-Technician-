@@ -59,7 +59,6 @@ class _ReportState extends State<Report> {
   void _submit() async {
     final bool isValid = _formKey.currentState!.validate();
     if (isValid) {
-      print("alfa fdkfalkdfjalkdf adfjasdl f");
       _formKey.currentState!.save();
       result = await _graphQlService.reportWork(
         serviceId: serviceId,

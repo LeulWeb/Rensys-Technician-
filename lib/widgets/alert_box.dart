@@ -11,7 +11,7 @@ class AlertBox extends StatelessWidget {
       required this.title,
       required this.description,
       required this.done,
-      required this.actionTitle});
+      required this.actionTitle,});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class AlertBox extends StatelessWidget {
             Lottie.asset('assets/images/success.json', width: 100),
             Text(
               description,
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.justify,
             ),
             Expanded(child: Container()),
           ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:super_banners/super_banners.dart';
 
 import 'package:technician_rensys/models/service.dart';
 import 'package:technician_rensys/providers/id_provider.dart';
@@ -15,11 +16,13 @@ import '../constants/colors.dart';
 class ServiceCard extends StatefulWidget {
   final ServiceModel service;
   final bool actionTitle;
+  final bool showNeedAccessory;
 
   const ServiceCard({
     super.key,
     required this.service,
     this.actionTitle = false,
+    this.showNeedAccessory = true,
   });
 
   @override
@@ -34,50 +37,24 @@ class _ServiceCardState extends State<ServiceCard> {
     return Consumer<IDProvider>(
       builder: (context, value, child) {
         return Card(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Stack(
-              children: [
-                if (widget.service.isWarranty)
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.green,
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.shield,
-                            color: Colors.white,
-                          ),
-                          Text(
-                            'Warranty',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: widget.service.isWarranty
-                                  ? Colors.white
-                                  : orange,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-                else
-                  Container(),
+          child: Stack(
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child:
 
-                //
-                Column(
+                    //
+                    Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextApp(
-                      title: widget.service.title,
-                      weight: FontWeight.bold,
-                      size: 20,
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: TextApp(
+                        title: widget.service.title,
+                        weight: FontWeight.bold,
+                        size: 20,
+                      ),
                     ),
                     const SizedBox(
                       height: 12,
@@ -235,19 +212,21 @@ class _ServiceCardState extends State<ServiceCard> {
                       height: 8,
                     ),
 
-                    TextButton(
-                      onPressed: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: const [
-                          Icon(Icons.build),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Text("Need Accessory"),
-                        ],
-                      ),
-                    ),
+                    widget.showNeedAccessory
+                        ? TextButton(
+                            onPressed: () {},
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: const [
+                                Icon(Icons.build),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text("Need Accessory"),
+                              ],
+                            ),
+                          )
+                        : Container(),
 
                     const SizedBox(
                       height: 8,
@@ -292,8 +271,29 @@ class _ServiceCardState extends State<ServiceCard> {
                         : Container()
                   ],
                 ),
-              ],
-            ),
+              ),
+              widget.service.isWarranty
+                  ? Positioned(
+                      child: CornerBanner(
+                          bannerPosition: CornerBannerPosition.topLeft,
+                          bannerColor: Colors.green,
+                          child: IntrinsicWidth(
+                            child: Row(
+                              children: const [
+                                Icon(
+                                  Icons.shield,
+                                  color: Colors.white,
+                                ),
+                                Text(
+                                  "Warranty",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          )),
+                    )
+                  : Container()
+            ],
           ),
         );
       },

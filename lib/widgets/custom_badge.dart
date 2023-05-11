@@ -8,20 +8,19 @@ class CustomBadge extends StatelessWidget {
     required this.number,
   });
 
-  
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.0),
-        color: Colors.red,
-      ),
-      child: Text(
-        number.toString(),
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
+      decoration: BoxDecoration(),
+      child: CircleAvatar(
+        backgroundColor: Colors.white,
+        radius: 12,
+        child: Text(
+          number.toString(),
+          style: const TextStyle(
+            color: Colors.blue,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

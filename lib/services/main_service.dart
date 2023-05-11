@@ -1,10 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:technician_rensys/models/bundle_package.dart';
 import 'package:technician_rensys/models/service.dart';
 import 'package:technician_rensys/providers/service_list.dart';
 import '../models/job.dart';
+import '../providers/bundle_package_provider.dart';
 import '../providers/job_list.dart';
 import 'graphql_client.dart';
 
@@ -195,6 +199,43 @@ class MainService {
       );
 
       return result;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  //Getting List of subscription packages
+  Future<bool> getPackage(BuildContext context) async {
+    const String getPackageQuery = '''
+      query MyQuery {
+  subscription_plan(where: {is_active: {_eq: true}}) {
+    name
+    number_of_service
+    plan_type
+    price
+  }
+}
+    ''';
+
+    try {
+      QueryResult response = await client.query(QueryOptions(
+          document: gql(getPackageQuery),
+          fetchPolicy: FetchPolicy.networkOnly));
+
+      if (response.hasException) {
+        throw Exception(response.exception);
+      }
+
+      final List fromJson = response.data?["subscription_plan"];
+      final List<BundlePackage> toModel =
+          fromJson.map((e) => BundlePackage.fromJson(e)).toList();
+
+      //Setting to the provider
+      final bundleProvider =
+          Provider.of<BundlePackageProvider>(context, listen: false);
+      bundleProvider.setBundlePackage(toModel);
+
+      return true;
     } catch (e) {
       throw Exception(e);
     }
