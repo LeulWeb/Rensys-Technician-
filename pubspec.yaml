@@ -46,6 +46,9 @@ dependencies:
   logger: ^1.3.0
   font_awesome_flutter: ^10.4.0
   super_banners: ^0.0.1
+  flutter_slidable: ^3.0.0
+  percent_indicator: ^4.2.3
+
 
 
 dev_dependencies:

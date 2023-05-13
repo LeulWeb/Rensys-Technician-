@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:technician_rensys/models/bundle_package.dart';
 import 'package:technician_rensys/providers/bundle_package_provider.dart';
 import 'package:technician_rensys/services/main_service.dart';
 
