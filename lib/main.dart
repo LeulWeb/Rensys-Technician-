@@ -7,10 +7,12 @@ import 'package:technician_rensys/providers/job_list.dart';
 import 'package:technician_rensys/providers/page_index.dart';
 import 'package:provider/provider.dart';
 import 'package:technician_rensys/providers/service_list.dart';
+import 'package:technician_rensys/providers/user_bank_provider.dart';
 import 'package:technician_rensys/screens/home_screen.dart';
 import 'package:technician_rensys/screens/job_screen.dart';
 import 'package:technician_rensys/screens/login_screen.dart';
 import './services/graphql_client.dart';
+import 'models/profile.dart';
 
 void main(List<String> args) async {
   await initHiveForFlutter();
@@ -28,7 +30,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => JobList()),
         ChangeNotifierProvider(create: (_) => ServiceList()),
         ChangeNotifierProvider(create: (_) => IDProvider()),
-        ChangeNotifierProvider(create: (_)=> BundlePackageProvider())
+        ChangeNotifierProvider(create: (_)=> BundlePackageProvider()),
+        ChangeNotifierProvider(create: (_)=> UserBankProvider()),
+        ChangeNotifierProvider(create: (_)=> ProfileProvider()),
       ],
       child: MaterialApp(
         //Defining custom theme

@@ -6,10 +6,13 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:technician_rensys/models/bundle_package.dart';
 import 'package:technician_rensys/models/service.dart';
+import 'package:technician_rensys/models/user_bank.dart';
 import 'package:technician_rensys/providers/service_list.dart';
 import '../models/job.dart';
+import '../models/profile.dart';
 import '../providers/bundle_package_provider.dart';
 import '../providers/job_list.dart';
+import '../providers/user_bank_provider.dart';
 import 'graphql_client.dart';
 
 class MainService {
@@ -69,6 +72,7 @@ class MainService {
           fetchPolicy: FetchPolicy.networkOnly,
         ),
       );
+      // logger.d(result);
       final List<dynamic> mapList = await result.data?["jobs"];
       // Set it to provider
       final List<JobModel> modelList =
@@ -137,8 +141,6 @@ class MainService {
     }
   }
 }
-
-
   ''';
     try {
       QueryResult result = await client.query(
@@ -238,6 +240,97 @@ class MainService {
       return true;
     } catch (e) {
       throw Exception(e);
+    }
+  }
+
+  //* Acessing the bank account
+
+  Future<List<UserBank>> getBankAccount(BuildContext context) async {
+    const bankQuery = '''
+      query MyQuery {
+  bank_account {
+    account_number
+    bank {
+      name
+    }
+  }
+}
+''';
+
+    try {
+      QueryResult response = await client.query(
+        QueryOptions(
+          document: gql(bankQuery),
+          fetchPolicy: FetchPolicy.networkOnly,
+        ),
+      );
+
+      if (response.hasException) {
+        throw Exception(response.exception);
+      }
+
+      final List<dynamic> jsonBankList = response.data!["bank_account"];
+      // logger.d(jsonBankList, "Bank List");
+      final List<UserBank> _userBankList =
+          jsonBankList.map((e) => UserBank.fromMap(e)).toList();
+      // logger.d(_userBankList);
+      final userBankProvider =
+          Provider.of<UserBankProvider>(context, listen: false);
+      userBankProvider.setBankList(_userBankList);
+      logger.d(userBankProvider.userBankList);
+
+      return _userBankList;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  //Technician Profile
+  Future<QueryResult> getTechnician(BuildContext context) async {
+    getBankAccount(context);
+
+    const techQuery = '''
+      query MyQuery {
+  technician {
+    availability
+    avator
+    bios
+    first_name
+    is_verified
+    last_name
+    packages
+    phone_number
+  }
+}
+
+
+  ''';
+
+    try {
+      QueryResult result = await client.query(
+        QueryOptions(
+          document: gql(techQuery),
+          fetchPolicy: FetchPolicy.networkOnly,
+        ),
+      );
+
+      if (result.hasException) {
+        throw Exception(result.exception);
+      }
+
+      final Map json = result.data!["technician"][0];
+      // logger.d(jsonList.first, "Technician");
+      // logger.d(json, "Technician");
+      // logger.d(Profile.fromMap(json), "Technician Modeld");
+      final Profile profile = Profile.fromMap(json);
+      logger.d(profile);
+      final profileProvider =
+          Provider.of<ProfileProvider>(context, listen: false);
+      profileProvider.setProfile(profile);
+      // logger.d(profileProvider.profile, "Profile Provider");
+      return result;
+    } catch (error) {
+      throw Exception(error);
     }
   }
 }
