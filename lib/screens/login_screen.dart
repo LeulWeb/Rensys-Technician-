@@ -10,7 +10,9 @@ import '../widgets/text_app.dart';
 //Working with shared preference
 
 class Login extends StatefulWidget {
-  const Login({super.key});
+  final void Function(Locale locale) setLocale;
+
+  const Login({super.key, required this.setLocale});
 
   @override
   State<Login> createState() => _LoginState();
@@ -65,7 +67,7 @@ class _LoginState extends State<Login> {
   void goHome() {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (context) => const Responsive(),
+        builder: (context) =>  Responsive(setLocale: widget.setLocale),
       ),
     );
   }
@@ -151,7 +153,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return isLoggedIn!
-        ? const Responsive()
+        ?  Responsive(setLocale: widget.setLocale,)
         : Scaffold(
             body: SafeArea(
               child: Center(

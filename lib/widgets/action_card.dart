@@ -34,6 +34,7 @@ class ActionCard extends StatelessWidget {
                   LinearGradient(colors: colors, begin: Alignment.topCenter)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(child: Container()),
               Text(
@@ -57,6 +58,7 @@ class ActionCard extends StatelessWidget {
               Expanded(child: Container()),
               Text(
                 description,
+                textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white),
               ),
               Expanded(child: Container()),

@@ -1,0 +1,17 @@
+{
+    "language":"English",
+
+    "home": "Home",
+    "newJobs": "New Jobs",
+    "noJobMessage":"We regret to inform you that there are no new jobs available for you at this time",
+    "myWork": "My Work",
+    "pending": "Pending",
+    "penDesc" :"Track in-progress",
+    "finished":"Finished",
+    "finishedDesc":"View finished tasks",
+    "package": "Package",
+    "packageDesc":"Buy job bundles",
+    "recent": "Recent",
+    "recentDesc" :"View recent tasks"
+
+}

@@ -15,7 +15,7 @@ import 'package:technician_rensys/widgets/text_app.dart';
 import '../providers/job_list.dart';
 
 import 'package:carousel_slider/carousel_slider.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../widgets/carousel_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -74,8 +74,8 @@ class _HomeState extends State<Home> {
           },
           child: Scaffold(
             appBar: AppBar(
-              title: const Text(
-                "Home",
+              title: Text(
+                AppLocalizations.of(context)!.home,
               ),
             ),
             body: SafeArea(
@@ -87,8 +87,8 @@ class _HomeState extends State<Home> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const TextApp(
-                      title: "New Jobs",
+                    TextApp(
+                      title: AppLocalizations.of(context)!.newJobs,
                       size: 20,
                       weight: FontWeight.normal,
                     ),
@@ -125,8 +125,11 @@ class _HomeState extends State<Home> {
                                                                 .size
                                                                 .height *
                                                             0.25),
-                                                const Text(
-                                                    "We regret to inform you that there are no new jobs available for you at this time.")
+                                                Text(
+                                                  AppLocalizations.of(context)!
+                                                      .noJobMessage,
+                                                  textAlign: TextAlign.start,
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -172,8 +175,8 @@ class _HomeState extends State<Home> {
                     const SizedBox(
                       height: 12,
                     ),
-                    const TextApp(
-                      title: "My Work",
+                    TextApp(
+                      title: AppLocalizations.of(context)!.myWork,
                       size: 20,
                       weight: FontWeight.normal,
                     ),
@@ -205,8 +208,9 @@ class _HomeState extends State<Home> {
                                   color: Colors.white,
                                   size: 50,
                                 ),
-                                title: "Pending",
-                                description: "Track in-progress"),
+                                title: AppLocalizations.of(context)!.pending,
+                                description:
+                                    AppLocalizations.of(context)!.penDesc),
                             ActionCard(
                                 colors: const [lightBlue, lightBlue],
                                 custom_badge:
@@ -220,8 +224,9 @@ class _HomeState extends State<Home> {
                                   color: Colors.white,
                                   size: 50,
                                 ),
-                                title: "Finished",
-                                description: "View finished tasks."),
+                                title: AppLocalizations.of(context)!.finished,
+                                description:
+                                    AppLocalizations.of(context)!.finishedDesc),
                             ActionCard(
                                 colors: [Colors.green, Colors.green],
                                 custom_badge: null,
@@ -234,8 +239,9 @@ class _HomeState extends State<Home> {
                                   color: Colors.white,
                                   size: 50,
                                 ),
-                                title: "Coin",
-                                description: "Buy service bundle"),
+                                title: AppLocalizations.of(context)!.package,
+                                description:
+                                    AppLocalizations.of(context)!.packageDesc),
                             ActionCard(
                               colors: [yellow, yellow],
                               custom_badge: null,
@@ -243,13 +249,14 @@ class _HomeState extends State<Home> {
                                 value.navigateTo(6);
                               },
                               color: Colors.red,
-                              title: "Recent",
+                              title: AppLocalizations.of(context)!.recent,
                               ActionIcon: const Icon(
                                 Icons.access_time,
                                 color: Colors.white,
                                 size: 50,
                               ),
-                              description: "View recent tasks.",
+                              description:
+                                  AppLocalizations.of(context)!.recentDesc,
                             ),
                           ],
                         ),

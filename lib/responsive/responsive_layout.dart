@@ -7,14 +7,16 @@ import '../constants/breakpoint.dart';
 
 
 class Responsive extends StatelessWidget {
-  const Responsive({super.key});
+  final void Function(Locale locale) setLocale;
+
+  const Responsive({super.key, required this.setLocale});
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraint){
         if(constraint.maxWidth<= mobileBreakPoint){
-          return Mobile();
+          return Mobile(setLocale: setLocale,);
         }else{
           return Website();
         }

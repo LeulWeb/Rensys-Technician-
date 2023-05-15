@@ -12,11 +12,13 @@ import 'package:technician_rensys/services/main_service.dart';
 import 'package:logger/logger.dart';
 import '../providers/service_list.dart';
 import '../providers/user_bank_provider.dart';
-import '../widgets/bank_card.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({super.key});
+  const Profile({super.key, required this.setLocale});
 
+  final void Function(Locale locale) setLocale;
   static const profileRoute = "/profile";
 
   @override
@@ -27,6 +29,12 @@ class _ProfileState extends State<Profile> {
   SharedPreferences? loginData;
   final _service = MainService();
 
+  SharedPreferences? Lang;
+
+  Future<void> initLang() async {
+    Lang = await SharedPreferences.getInstance();
+  }
+
   Logger logger = Logger();
 
   void logout() async {
@@ -35,13 +43,32 @@ class _ProfileState extends State<Profile> {
     loginData!.setString("accestoken", "");
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (context) => Login(),
+        builder: (context) => Login(
+          setLocale: widget.setLocale,
+        ),
       ),
     );
   }
 
   void _loadData() async {
     await _service.getTechnician(context);
+  }
+
+  //function to alter the language
+  void changeLang() async {
+    //check the current language
+    if (Lang!.getString("lang") == "en") {
+      //change to french
+      widget.setLocale(Locale("am"));
+      await Lang!.setString("lang", "await");
+      logger.d(Lang!.getString("lang"));
+    } else {
+      //change to english
+      widget.setLocale(Locale("en"));
+      await Lang!.setString("lang", "en");
+      logger.d(Lang!.getString("lang"));
+    }
+    logger.d(Lang!.getString("lang"));
   }
 
   double doPercentage() {
@@ -56,6 +83,7 @@ class _ProfileState extends State<Profile> {
   void initState() {
     super.initState();
     _loadData();
+    initLang();
   }
 
   @override
@@ -99,7 +127,7 @@ class _ProfileState extends State<Profile> {
                       const SizedBox(
                         width: 12,
                       ),
-                      Text('Languages'),
+                      Text(AppLocalizations.of(context)!.language),
                     ],
                   ),
                   value: 'language',
@@ -119,7 +147,15 @@ class _ProfileState extends State<Profile> {
               ];
             },
             onSelected: (value) {
-              print(value);
+              if (value == 'logout') {
+                logout();
+              } else if (value == 'language') {
+                //change the language
+                changeLang();
+              } else {
+                //edit profile
+                pageIndex.navigateTo(10);
+              }
             },
           ),
         ],
@@ -344,7 +380,7 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
 
-              //* Forth ROw to show complain
+              //* Forth Row to show complain
 
               const SizedBox(
                 height: 12,
@@ -387,6 +423,11 @@ class _ProfileState extends State<Profile> {
                   ),
                 ),
               ),
+              TextButton(
+                  onPressed: () {
+                    widget.setLocale(Locale("en"));
+                  },
+                  child: Text("English")),
             ],
           ),
         ),

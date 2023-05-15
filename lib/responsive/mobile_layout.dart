@@ -15,27 +15,37 @@ import 'package:technician_rensys/screens/package_screen.dart';
 
 import '../constants/colors.dart';
 import '../screens/completed_screen.dart';
+import '../screens/update_profile_screen.dart';
 
 class Mobile extends StatefulWidget {
-  const Mobile({super.key});
+  final void Function(Locale locale) setLocale;
+  //const Mobile({required Key key, required this.setLocale}) : super(key: key);
+  const Mobile({super.key, required this.setLocale});
 
   @override
   State<Mobile> createState() => _MobileState();
 }
 
 class _MobileState extends State<Mobile> {
-  List<Widget> pages = const [
-    Home(),
-    Job(),
-    NotificationScreen(),
-    Profile(),
-    CompletedScreen(),
-    Progress(),
-    Recent(),
-    Report(),
-    Request(),
-    BuyCoin(),
-  ];
+  List<Widget> pages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    pages = [
+      const Home(),
+      const Job(),
+      const NotificationScreen(),
+      Profile(setLocale: widget.setLocale),
+      const CompletedScreen(),
+      const Progress(),
+      const Recent(),
+      const Report(),
+      const Request(),
+      const BuyCoin(),
+      const UpdateProfile(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {

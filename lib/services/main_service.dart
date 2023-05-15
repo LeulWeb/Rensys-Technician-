@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:technician_rensys/models/bundle_package.dart';
 import 'package:technician_rensys/models/service.dart';
 import 'package:technician_rensys/models/user_bank.dart';
+import 'package:technician_rensys/providers/all_banks.dart';
 import 'package:technician_rensys/providers/service_list.dart';
 import '../models/job.dart';
 import '../models/profile.dart';
@@ -238,6 +239,45 @@ class MainService {
       bundleProvider.setBundlePackage(toModel);
 
       return true;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  //*Accessing all banks
+  Future<List<AllBanksModel>> getAllBanks(BuildContext context) async {
+    const allBankQuery = '''
+   query MyQuery {
+  banks {
+    name
+    id
+  }
+}
+
+''';
+
+    try {
+      QueryResult response = await client.query(
+        QueryOptions(
+          document: gql(allBankQuery),
+          fetchPolicy: FetchPolicy.networkOnly,
+        ),
+      );
+
+      if (response.hasException) {
+        throw Exception(response.exception);
+      }
+
+      final List<dynamic> jsonAllBankList = response.data!["banks"];
+
+      final List<AllBanksModel> _allBankList =
+          jsonAllBankList.map((e) => AllBanksModel.fromMap(e)).toList();
+      final allBankProvider =
+          Provider.of<AllBanksProvider>(context, listen: false);
+      allBankProvider.setAllBanks(_allBankList);
+      logger.d(allBankProvider.allBanks, "List of all banks");
+
+      return _allBankList;
     } catch (e) {
       throw Exception(e);
     }

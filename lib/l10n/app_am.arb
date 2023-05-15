@@ -1,0 +1,17 @@
+{
+    "language":"አማርኛ",
+
+
+    "home": "ቤት",
+    "newJobs": "አዳዲስ ሥራዎሽ",
+    "noJobMessage":"በዚህ ጊዜ ለእርስዎ ምንም አይነት አዲስ ስራዎች የሉም",
+    "myWork": "የኔ ሥራ",
+    "pending": "በሥራ ላይ",
+    "penDesc" :"በሂደት ላይ ያሉ ሥራዎች",
+    "finished":"የተጨረሱ",
+    "finishedDesc":"የተጠናቀቁ ስራዎችን ይመልከቱ",
+    "package": "ጥቅል",
+    "packageDesc":"የስራ ጥቅሎችን ይግዙ",
+    "recent": "የቅርብ ጊዜ",
+    "recentDesc" :"የቅርብ ጊዜ ሥራዎችን ይመልከቱ"
+}
