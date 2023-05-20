@@ -1,12 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:technician_rensys/constants/colors.dart';
-import 'package:technician_rensys/providers/all_banks.dart';
 import 'package:technician_rensys/services/main_service.dart';
 
 import '../models/profile.dart';
 import '../providers/page_index.dart';
-import '../widgets/text_app.dart';
+import '../providers/user_bank_provider.dart';
 
 class UpdateProfile extends StatefulWidget {
   const UpdateProfile({super.key});
@@ -17,6 +21,9 @@ class UpdateProfile extends StatefulWidget {
 
 class _UpdateProfileState extends State<UpdateProfile> {
   MainService _service = MainService();
+  File? selectedImage;
+  String? _chosenImage;
+  Logger logger = Logger();
   List _banks = [];
   dynamic _selectedValue;
   bool _isChecked = true;
@@ -24,6 +31,25 @@ class _UpdateProfileState extends State<UpdateProfile> {
   void initState() {
     super.initState();
     allBanks();
+  }
+
+  //Pick image
+  // Function to handle image selection from gallery
+  Future<void> _pickImageFromGallery() async {
+    final imagePicker = ImagePicker();
+    final pickedImage =
+        await imagePicker.pickImage(source: ImageSource.gallery);
+    final imageBytes = await pickedImage!.readAsBytes();
+    final base64Image = base64Encode(imageBytes);
+
+    if (pickedImage != null) {
+      setState(() {
+        selectedImage = File(pickedImage.path);
+        _chosenImage = base64Image;
+      });
+      // Do something with the selected image
+    }
+    print(_chosenImage);
   }
 
   //? Load all banks
@@ -34,10 +60,23 @@ class _UpdateProfileState extends State<UpdateProfile> {
     });
   }
 
+  //? Load all user banks
+  // void userBanks() async {
+  //   List _userBankList = await _service.getBankAccount(context);
+  //   setState(() {
+  //     _userBank = _userBankList;
+  //   });
+  //   logger.d(_userBankList);
+  // }
+
   @override
   Widget build(BuildContext context) {
     final pageIndex = Provider.of<PageIndex>(context);
     final _profile = Provider.of<ProfileProvider>(context);
+    final _userBank = Provider.of<UserBankProvider>(context);
+    dynamic currentBank = _userBank.userBankList.first.id;
+    dynamic currentAccount = _userBank.userBankList.first.accountBalance;
+    logger.i(_userBank.userBankList);
 
     //  final FocusNode _passwordFocus = FocusNode();
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -67,11 +106,29 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 Row(
                   children: [
                     Expanded(
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          "https://images.unsplash.com/photo-1621905252472-943afaa20e20?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=388&q=80",
-                        ),
-                        radius: 60,
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            backgroundImage: selectedImage != null
+                                ? FileImage(selectedImage!)
+                                : AssetImage('assets/images/avatar.png')
+                                    as ImageProvider,
+                            radius: 60,
+                          ),
+                          Positioned(
+                            child: CircleAvatar(
+                              child: IconButton(
+                                icon: Icon(Icons.camera_alt_outlined),
+                                onPressed: () {
+                                  _pickImageFromGallery();
+                                },
+                              ),
+                              backgroundColor: lightBlue,
+                            ),
+                            bottom: 0,
+                            right: 0,
+                          )
+                        ],
                       ),
                     ),
                     const SizedBox(
@@ -167,7 +224,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                   onChanged: (newValue) {
                     // Set the selected value
                     setState(() {
-                      _selectedValue = newValue!;
+                      _selectedValue = newValue;
                     });
                     print(_selectedValue);
                   },
@@ -189,6 +246,12 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     labelText: "Account Number",
                     border: OutlineInputBorder(),
                   ),
+                  initialValue: _userBank.userBankList
+                          .any((element) => element.id == _selectedValue)
+                      ? _userBank.userBankList
+                          .firstWhere((element) => element.id == _selectedValue)
+                          .accountBalance
+                      : "",
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "Please enter your account number";
@@ -206,7 +269,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
                   title: Text('Availability'),
                   subtitle: Text('Are you available for jobs?'),
                   value: _isChecked,
-                  
                   onChanged: (bool? newValue) {
                     setState(() {
                       _isChecked = newValue!;

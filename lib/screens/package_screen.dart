@@ -77,6 +77,7 @@ class _BuyCoinState extends State<BuyCoin> {
                     itemCount: bundlePackage.bundlePackage.length,
                     itemBuilder: (context, index) {
                       return PackageCard(
+                        id: bundlePackage.bundlePackage[index].id,
                         name: bundlePackage.bundlePackage[index].name,
                         price: bundlePackage.bundlePackage[index].price,
                         service:

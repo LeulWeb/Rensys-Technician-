@@ -16,6 +16,7 @@ class GraphQLConfig {
     getToken: () async {
       getAccessToken();
       if (accessToken != null) {
+        // print(accessToken);
         return "Bearer $accessToken";
       }
       return null;

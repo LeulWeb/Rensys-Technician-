@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import '../providers/job_list.dart';
 import 'graphql_client.dart';
@@ -7,6 +8,7 @@ import 'graphql_client.dart';
 class GraphQLService {
   static GraphQLConfig graphQLConfig = GraphQLConfig();
   GraphQLClient client = graphQLConfig.clientToQuery();
+  Logger logger = Logger();
 
   //Method for sign in the user
   Future<QueryResult> login(
@@ -28,7 +30,7 @@ class GraphQLService {
       );
 
       if (result.hasException) {
-        print(result.exception!.graphqlErrors);
+        logger.d(result.exception!.graphqlErrors);
         throw Exception(result.exception);
       }
       print(result);

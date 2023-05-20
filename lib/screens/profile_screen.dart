@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, prefer_const_literals_to_create_immutables
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -174,9 +176,10 @@ class _ProfileState extends State<Profile> {
                   Stack(
                     children: [
                       CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          "https://images.unsplash.com/photo-1621905252472-943afaa20e20?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=388&q=80",
-                        ),
+                        backgroundImage: Image.network(
+                          "https://images.unsplash.com/photo-1682688759157-57988e10ffa8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80",
+                          fit: BoxFit.cover,
+                        ).image,
                         radius: 50,
                       ),
                       Positioned(
@@ -309,7 +312,7 @@ class _ProfileState extends State<Profile> {
                     Container(
                       child: Column(
                         children: [
-                          //Woking on the Bar
+                          //Working on the Bar
                           CircularPercentIndicator(
                             backgroundColor: Colors.red,
                             radius: 60.0,
@@ -423,11 +426,6 @@ class _ProfileState extends State<Profile> {
                   ),
                 ),
               ),
-              TextButton(
-                  onPressed: () {
-                    widget.setLocale(Locale("en"));
-                  },
-                  child: Text("English")),
             ],
           ),
         ),

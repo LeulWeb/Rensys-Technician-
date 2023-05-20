@@ -210,14 +210,16 @@ class MainService {
   //Getting List of subscription packages
   Future<bool> getPackage(BuildContext context) async {
     const String getPackageQuery = '''
-      query MyQuery {
+    query MyQuery {
   subscription_plan(where: {is_active: {_eq: true}}) {
     name
     number_of_service
     plan_type
     price
+    id
   }
 }
+
     ''';
 
     try {
@@ -230,6 +232,7 @@ class MainService {
       }
 
       final List fromJson = response.data?["subscription_plan"];
+  
       final List<BundlePackage> toModel =
           fromJson.map((e) => BundlePackage.fromJson(e)).toList();
 
@@ -275,7 +278,7 @@ class MainService {
       final allBankProvider =
           Provider.of<AllBanksProvider>(context, listen: false);
       allBankProvider.setAllBanks(_allBankList);
-      logger.d(allBankProvider.allBanks, "List of all banks");
+      // logger.d(allBankProvider.allBanks, "List of all banks");
 
       return _allBankList;
     } catch (e) {
@@ -283,18 +286,20 @@ class MainService {
     }
   }
 
-  //* Acessing the bank account
+  //* Accessing the bank account
 
   Future<List<UserBank>> getBankAccount(BuildContext context) async {
     const bankQuery = '''
-      query MyQuery {
+    query MyQuery {
   bank_account {
     account_number
+    bank_id
     bank {
       name
     }
   }
 }
+
 ''';
 
     try {
@@ -317,7 +322,7 @@ class MainService {
       final userBankProvider =
           Provider.of<UserBankProvider>(context, listen: false);
       userBankProvider.setBankList(_userBankList);
-      logger.d(userBankProvider.userBankList);
+      // logger.d(userBankProvider.userBankList);
 
       return _userBankList;
     } catch (e) {
@@ -363,7 +368,7 @@ class MainService {
       // logger.d(json, "Technician");
       // logger.d(Profile.fromMap(json), "Technician Modeld");
       final Profile profile = Profile.fromMap(json);
-      logger.d(profile);
+      // logger.d(profile);
       final profileProvider =
           Provider.of<ProfileProvider>(context, listen: false);
       profileProvider.setProfile(profile);
@@ -372,5 +377,43 @@ class MainService {
     } catch (error) {
       throw Exception(error);
     }
+  }
+
+
+
+
+
+  //Buying package
+  Future<bool> buyPackage({required String subId, required String receiptNumber , required num amount}) async{
+    const buyPackageQuery = '''
+      mutation MyMutation(\$amount: Float!, \$receipt_number: String !, \$subscription_plan_id: uuid!) {
+  insert_subscription_one(object: {amount: \$amount, receipt_number: \$receipt_number, subscription_plan_id: \$subscription_plan_id}) {
+    id
+  }
+}
+  ''';
+
+  try {
+    QueryResult response = await client.mutate(
+      MutationOptions(
+        document: gql(buyPackageQuery),
+        variables: {
+          "amount": amount,
+          "receipt_number": receiptNumber,
+          "subscription_plan_id": subId,
+        },
+      ),
+    );
+
+    if (response.hasException) {
+      throw Exception(response.exception);
+    }
+    logger.d(response.data!["insert_subscription_one"]["id"], "Response from buying package");
+    return true;
+  } catch (e) {
+    throw Exception(e);
+  }
+  
+
   }
 }
