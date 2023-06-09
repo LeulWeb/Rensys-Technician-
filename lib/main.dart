@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:technician_rensys/constants/colors.dart';
@@ -7,7 +6,6 @@ import 'package:technician_rensys/providers/all_banks.dart';
 import 'package:technician_rensys/providers/bundle_package_provider.dart';
 import 'package:technician_rensys/providers/id_provider.dart';
 import 'package:technician_rensys/providers/job_list.dart';
-import 'package:technician_rensys/providers/locale.dart';
 import 'package:technician_rensys/providers/page_index.dart';
 import 'package:provider/provider.dart';
 import 'package:technician_rensys/providers/service_list.dart';
@@ -15,6 +13,7 @@ import 'package:technician_rensys/providers/user_bank_provider.dart';
 import 'package:technician_rensys/screens/home_screen.dart';
 import 'package:technician_rensys/screens/job_screen.dart';
 import 'package:technician_rensys/screens/login_screen.dart';
+import 'package:technician_rensys/screens/splash_screen.dart';
 import './services/graphql_client.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'models/profile.dart';
@@ -45,8 +44,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   //ask for user permission
-
-
   void getLang() async {
     Lang = await SharedPreferences.getInstance();
     if (Lang!.getString('lang') == null) {
@@ -95,7 +92,7 @@ class _MyAppState extends State<MyApp> {
           scaffoldBackgroundColor: darkBackground,
         ),
         themeMode: ThemeMode.system,
-        home: Login(
+        home: SplashPage(
           setLocale: setLocale,
         ),
         routes: {

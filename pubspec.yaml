@@ -49,6 +49,8 @@ dependencies:
   percent_indicator: ^4.2.3
   geolocator: ^9.0.2
   image_picker: ^0.8.7+5
+  easy_splash_screen: ^1.0.4
+  marquee: ^2.2.3
   flutter_localizations:
     sdk: flutter
 

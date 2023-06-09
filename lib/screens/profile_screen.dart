@@ -1,7 +1,5 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, prefer_const_literals_to_create_immutables
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,7 +13,6 @@ import 'package:logger/logger.dart';
 import '../providers/service_list.dart';
 import '../providers/user_bank_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key, required this.setLocale});
@@ -54,6 +51,12 @@ class _ProfileState extends State<Profile> {
 
   void _loadData() async {
     await _service.getTechnician(context);
+  }
+
+
+  // 
+  void _showDialog(){
+   
   }
 
   //function to alter the language
@@ -107,7 +110,9 @@ class _ProfileState extends State<Profile> {
         title: const Text("Profile"),
         actions: [
           PopupMenuButton(
-            icon: Icon(Icons.more_vert),
+            color: Color(0xffffffff),
+            elevation: 0,
+            icon: Icon(Icons.more_vert, color: darkBlue),
             itemBuilder: (context) {
               return [
                 PopupMenuItem(
@@ -125,14 +130,14 @@ class _ProfileState extends State<Profile> {
                 PopupMenuItem(
                   child: Row(
                     children: [
-                      Icon(Icons.language),
+                      Icon(Icons.info_outline),
                       const SizedBox(
                         width: 12,
                       ),
-                      Text(AppLocalizations.of(context)!.language),
+                      Text('About Us'),
                     ],
                   ),
-                  value: 'language',
+                  value: 'about',
                 ),
                 PopupMenuItem(
                   child: Row(
@@ -166,9 +171,11 @@ class _ProfileState extends State<Profile> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: SingleChildScrollView(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                height: 22,
+              const SizedBox(
+                height: 8,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -245,13 +252,9 @@ class _ProfileState extends State<Profile> {
                   )
                 ],
               ),
-              const SizedBox(
-                height: 23,
-              ),
+
               Divider(),
-
               //* Second Row
-
               IntrinsicHeight(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -337,24 +340,27 @@ class _ProfileState extends State<Profile> {
 
               //* the third Div
 
-              Card(
-                color: lightBlue,
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
+              ClipRRect(
+                borderRadius: BorderRadiusDirectional.only(
+                  topStart: Radius.circular(16),
+                  topEnd: Radius.circular(16),
+                ),
+                child: Container(
+                  color: Colors.white,
                   child: ExpansionTile(
                     subtitle: Text(
                       "Account details",
-                      style: TextStyle(color: Colors.white),
+                      // style: TextStyle(color: Colors.white),
                     ),
                     iconColor: Colors.white,
                     leading: Icon(
                       Icons.account_balance,
                       size: 25,
-                      color: Colors.white,
+                      color: lightBlue,
                     ),
                     title: Text(
                       "Bank accounts",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      style: TextStyle(fontSize: 16),
                     ),
                     children: List.generate(
                       userBankProvider.userBankList.length,
@@ -365,16 +371,13 @@ class _ProfileState extends State<Profile> {
                               title: Text(
                                 userBankProvider.userBankList[i].name,
                                 style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
+                                  fontSize: 12,
                                 ),
                               ),
                               subtitle: Text(
                                 userBankProvider.userBankList[i].accountBalance
                                     .toString(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
+                                style: TextStyle(fontSize: 16),
                               ))
                         ],
                       ),
@@ -383,13 +386,62 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
 
+              ClipRRect(
+                child: Container(
+                  color: Colors.white,
+                  child: ExpansionTile(
+                      subtitle: Text(
+                        "Your location is used to filter nearby jobs",
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w300),
+                      ),
+                      iconColor: Colors.white,
+                      leading: Icon(
+                        Icons.location_on_outlined,
+                        size: 25,
+                        color: lightBlue,
+                      ),
+                      title: Text(
+                        "Location",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      children: [Text("Locaion of yse")]),
+                ),
+              ),
+
+              ClipRRect(
+                child: Container(
+                  color: Colors.white,
+                  child: ExpansionTile(
+                      subtitle: Text(
+                        "Select your language",
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w300),
+                      ),
+                      iconColor: Colors.white,
+                      leading: Icon(
+                        Icons.translate_outlined,
+                        size: 25,
+                        color: lightBlue,
+                      ),
+                      title: Text(
+                        "Language",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      children: [Text("Amahric")]),
+                ),
+              ),
+
               //* Forth Row to show complain
 
-              const SizedBox(
-                height: 12,
-              ),
+              // const SizedBox(
+              //   height: 8,
+              // ),
               ClipRRect(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadiusDirectional.only(
+                  bottomStart: Radius.circular(16),
+                  bottomEnd: Radius.circular(16),
+                ),
                 child: Container(
                   color: Colors.white,
                   child: Column(
@@ -397,29 +449,15 @@ class _ProfileState extends State<Profile> {
                       ListTile(
                         title: Text(
                           "Complain",
-                          style: TextStyle(color: Colors.red, fontSize: 18),
+                          style: TextStyle(color: Colors.red, fontSize: 16),
                         ),
                         subtitle: Text(
                           "Report a problem",
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(color: Colors.red, fontSize: 12),
                         ),
                         leading: Icon(
                           Icons.chat_bubble_outline_rounded,
                           color: Colors.red,
-                        ),
-                      ),
-                      ListTile(
-                        title: Text(
-                          "About Us",
-                          style: TextStyle(color: lightBlue, fontSize: 18),
-                        ),
-                        subtitle: Text(
-                          "Rensys Engineering",
-                          style: TextStyle(color: lightBlue),
-                        ),
-                        leading: Icon(
-                          Icons.chat_bubble_outline_rounded,
-                          color: lightBlue,
                         ),
                       ),
                     ],

@@ -41,7 +41,7 @@ class _JobState extends State<Job> {
           ),
           child: jobList.jobList.isEmpty
               ? const EmptyData(
-                  title: "No new Job",
+                  title: "",
                   description:
                       "We regret to inform you that there are no new jobs available for you at this time.")
               : Column(

@@ -16,17 +16,11 @@ class EmptyData extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(child: Container()),
-          TextApp(
-            title: title,
-            weight: FontWeight.bold,
-            size: 20,
-          ),
-          Expanded(child: Container()),
-          Lottie.asset("assets/images/emptyJob.json"),
+          Lottie.asset("assets/images/wait.json"),
           Expanded(child: Container()),
           TextApp(
             title: description,
-            weight: FontWeight.normal,
+            weight: FontWeight.w300,
             size: 16,
           ),
           Expanded(child: Container()),

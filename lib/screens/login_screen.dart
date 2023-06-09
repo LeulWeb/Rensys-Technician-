@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:logger/logger.dart';
 import 'package:lottie/lottie.dart';
 import 'package:technician_rensys/constants/colors.dart';
 import 'package:technician_rensys/services/graphql_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../responsive/responsive_layout.dart';
-import '../widgets/text_app.dart';
 
 //Working with shared preference
 
@@ -31,7 +31,8 @@ class _LoginState extends State<Login> {
   bool? isLoggedIn = false;
   String? accessToken = '';
   SharedPreferences? loginData;
-  bool showPassword = false;
+  bool showPassword = true;
+  Logger logger = Logger();
 
   @override
   void initState() {
@@ -46,9 +47,6 @@ class _LoginState extends State<Login> {
 
     super.dispose();
   }
-  
-
-
 
   void checkUserStatus() async {
     //we need to instantiate the shared preference
@@ -67,93 +65,68 @@ class _LoginState extends State<Login> {
   void goHome() {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (context) =>  Responsive(setLocale: widget.setLocale),
+        builder: (context) => Responsive(setLocale: widget.setLocale),
       ),
     );
   }
 
-
   void _handleSubmit() async {
     final bool isValid = _formKey.currentState!.validate();
-
     if (isValid) {
       _formKey.currentState!.save();
 
       setState(() {
         isLoading = true;
       });
-
-      
-        setState(() {
-          isLoading = false;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: red,
-            behavior: SnackBarBehavior.floating,
-            content: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                alignment: Alignment.center,
-                child: const Text(
-                    "Connection Timeout: Unable to connect to the server. Please check your internet connection and try again."),
-              ),
-            ),
-          ),
-        );
-      
-
-      final QueryResult resultQuery =
+      final result =
           await graphqlService.login(phone: phoneNumber, password: password);
-
-      if (resultQuery.hasException) {
-        setState(() {
-          isLoading = false;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: red,
-            behavior: SnackBarBehavior.floating,
-            content: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                alignment: Alignment.center,
-                child: resultQuery.exception!.graphqlErrors.first.message ==
-                        "http exception when calling webhook"
-                    ? const Text("Sorry server is not working please try again")
-                    : Text(resultQuery.exception!.graphqlErrors.first.message),
-              ),
-            ),
-          ),
-        );
-
-        return;
-      }
-
-      setState(() {
-        result = resultQuery;
-      });
-
-      //setting the shared preference
-      loginData?.setBool("loggedIn", true);
-      loginData?.setString("accessToken", result!.data!["login"]["accestoken"]);
 
       setState(() {
         isLoading = false;
       });
 
+      if (result.hasException) {
+        if (result.exception!.graphqlErrors.isNotEmpty) {
+          if (result.exception!.graphqlErrors.first.message ==
+                  'incorrect password' ||
+              result.exception!.graphqlErrors.first.message ==
+                  'incorrect username or password please enter again') {
+            showError(
+                "Incorrect Email or Password. Please double-check your login credentials and try again.");
+          } else {
+            showError(
+                "Unable to Connect to Server. Please check your internet connection and try again. If the problem persists, please contact our support team for further assistance.");
+          }
+        }
+      }
+
+      //setting the shared preference
+
+      loginData!.setBool("loggedIn", true);
+      loginData!.setString("accessToken", result.data!["login"]["accestoken"]);
       goHome();
     }
+  }
+
+  void showError(String errMessage) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(errMessage),
+      ),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.red,
+      padding: const EdgeInsets.all(10),
+      showCloseIcon: true,
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
     return isLoggedIn!
-        ?  Responsive(setLocale: widget.setLocale,)
+        ? Responsive(
+            setLocale: widget.setLocale,
+          )
         : Scaffold(
             body: SafeArea(
               child: Center(
@@ -169,7 +142,7 @@ class _LoginState extends State<Login> {
                         child: Form(
                           key: _formKey,
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Center(
@@ -184,24 +157,27 @@ class _LoginState extends State<Login> {
                                   ),
                                 ),
                               ),
-
-                              //Welcome text
-
-                              // const SizedBox(
-                              //   height: 12,
-                              // ),
-                              const TextApp(
-                                title: "Welcome Back",
-                                weight: FontWeight.bold,
-                                size: 30,
+                              const Text(
+                                "Welcome to Rensys",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    fontSize: 25, fontWeight: FontWeight.bold),
                               ),
-                              // const SizedBox(
-                              //   height: 12,
-                              // ),
-
+                              const SizedBox(
+                                height: 12,
+                              ),
                               TextFormField(
                                   decoration: const InputDecoration(
-                                      hintText: "Phone Number"),
+                                    hintText: "Phone Number",
+                                    border: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: darkBlue, width: 1),
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: darkBlue, width: 1),
+                                    ),
+                                  ),
                                   textInputAction: TextInputAction.next,
                                   onFieldSubmitted: (value) {
                                     FocusScope.of(context)
@@ -225,6 +201,16 @@ class _LoginState extends State<Login> {
                                   }),
                               TextFormField(
                                   decoration: InputDecoration(
+                                      border: const UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: darkBlue,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      enabledBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: darkBlue, width: 1),
+                                      ),
                                       hintText: "Password",
                                       suffix: IconButton(
                                         onPressed: () {
@@ -257,26 +243,22 @@ class _LoginState extends State<Login> {
                                   onSaved: (value) {
                                     password = value!;
                                   }),
-
                               const SizedBox(
                                 height: 12,
                               ),
-
-                              Container(
-                                  alignment: Alignment.centerRight,
-                                  child: const Text(
-                                    "Forgot password",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: lightBlue,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  )),
-
-                              const SizedBox(
-                                height: 12,
-                              ),
-
+                              // Container(
+                              //     alignment: Alignment.centerRight,
+                              //     child: const Text(
+                              //       "Forgot password",
+                              //       style: TextStyle(
+                              //         fontSize: 12,
+                              //         color: lightBlue,
+                              //         fontWeight: FontWeight.normal,
+                              //       ),
+                              //     )),
+                              // const SizedBox(
+                              //   height: 12,
+                              // ),
                               isLoading
                                   ? Center(
                                       child: SizedBox(
@@ -293,16 +275,29 @@ class _LoginState extends State<Login> {
                                         alignment: Alignment.center,
                                         padding: const EdgeInsets.all(12),
                                         decoration: BoxDecoration(
-                                          color: darkBlue,
+                                          color: lightBlue,
                                           borderRadius:
                                               BorderRadius.circular(12),
                                         ),
-                                        child: const Text(
-                                          "L O G I N",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                          ),
+                                        child: const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.handyman_outlined,
+                                              color: Colors.white,
+                                            ),
+                                            SizedBox(
+                                              width: 12,
+                                            ),
+                                            Text(
+                                              "L O G I N",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
