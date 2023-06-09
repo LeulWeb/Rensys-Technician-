@@ -53,27 +53,91 @@ class _ProfileState extends State<Profile> {
     await _service.getTechnician(context);
   }
 
-
-  // 
-  void _showDialog(){
-   
+  //
+  void _showDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Rensys Engineering"),
+            content: IntrinsicHeight(
+              child: IntrinsicWidth(
+                child: Column(
+                  children: [
+                    Image.asset("assets/images/logo.png"),
+                    Text(
+                      "Rensys Engineering & Trading PLC is an energy solution company based in Addis Ababa.  It was established with the aim of playing its role in providing renewable energy solutions for energy-deprived communities. Since its establishment, the company has electrified millions of lives through SHS, solar mini-grid, and solar lanterns.",
+                      style:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.phone),
+                        SizedBox(
+                          width: 2,
+                        ),
+                        Text("+251 952 494949 "),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.message_rounded),
+                        SizedBox(
+                          width: 2,
+                        ),
+                        Text("8544 (Toll Free)"),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.email_outlined),
+                        SizedBox(
+                          width: 2,
+                        ),
+                        Text(
+                          "info@rensysengineering.com",
+                          overflow: TextOverflow.clip,
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: Text('Close'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   //function to alter the language
-  void changeLang() async {
-    //check the current language
-    if (Lang!.getString("lang") == "en") {
-      //change to french
-      widget.setLocale(Locale("am"));
-      await Lang!.setString("lang", "await");
-      logger.d(Lang!.getString("lang"));
-    } else {
-      //change to english
-      widget.setLocale(Locale("en"));
-      await Lang!.setString("lang", "en");
-      logger.d(Lang!.getString("lang"));
+  void changeLang(String locale) async {
+    widget.setLocale(Locale(locale));
+    await Lang!.setString("lang", locale);
+
+    String? currentlanguage = Lang!.getString("lang");
+    if (currentlanguage! == "en") {
+      showSuccess("Language is set to English");
     }
-    logger.d(Lang!.getString("lang"));
+    if (currentlanguage == "am") {
+      showSuccess("ቋንቋ ወደ አማርኛ ተቀናብሯል");
+    }
+  }
+
+  void showSuccess(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      behavior: SnackBarBehavior.floating,
+      content: Text(message),
+      backgroundColor: Colors.green,
+      showCloseIcon: true,
+      padding: const EdgeInsets.all(10),
+    ));
   }
 
   double doPercentage() {
@@ -156,9 +220,8 @@ class _ProfileState extends State<Profile> {
             onSelected: (value) {
               if (value == 'logout') {
                 logout();
-              } else if (value == 'language') {
-                //change the language
-                changeLang();
+              } else if (value == 'about') {
+                _showDialog();
               } else {
                 //edit profile
                 pageIndex.navigateTo(10);
@@ -302,7 +365,9 @@ class _ProfileState extends State<Profile> {
                                       Icons.arrow_forward,
                                       color: Colors.white,
                                     ),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      pageIndex.navigateTo(9);
+                                    },
                                   ),
                                 ),
                               ],
@@ -405,7 +470,7 @@ class _ProfileState extends State<Profile> {
                         "Location",
                         style: TextStyle(fontSize: 16),
                       ),
-                      children: [Text("Locaion of yse")]),
+                      children: [Text("Location of user")]),
                 ),
               ),
 
@@ -428,7 +493,28 @@ class _ProfileState extends State<Profile> {
                         "Language",
                         style: TextStyle(fontSize: 16),
                       ),
-                      children: [Text("Amahric")]),
+                      children: [
+                        InkWell(
+                          //to english language
+                          onTap: () {
+                            changeLang("en");
+                          },
+                          child: ListTile(
+                            title: Text("English"),
+                            subtitle: Text("Use English language"),
+                          ),
+                        ),
+                        InkWell(
+                          //to amharic language
+                          onTap: () {
+                            changeLang("am");
+                          },
+                          child: ListTile(
+                            title: Text("አማርኛ"),
+                            subtitle: Text("አማርኛ ቋንቋ ይምረጡ"),
+                          ),
+                        )
+                      ]),
                 ),
               ),
 

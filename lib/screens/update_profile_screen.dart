@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:technician_rensys/constants/colors.dart';
 import 'package:technician_rensys/services/main_service.dart';
@@ -27,6 +28,16 @@ class _UpdateProfileState extends State<UpdateProfile> {
   List _banks = [];
   dynamic _selectedValue;
   bool _isChecked = true;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  // updated value holders
+  String fname = '';
+  String lname = '';
+  String phone = '';
+  String? bio;
+  String bank = '';
+  String accountNumber = '';
+
   @override
   void initState() {
     super.initState();
@@ -41,7 +52,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
         await imagePicker.pickImage(source: ImageSource.gallery);
     final imageBytes = await pickedImage!.readAsBytes();
     final base64Image = base64Encode(imageBytes);
-
     if (pickedImage != null) {
       setState(() {
         selectedImage = File(pickedImage.path);
@@ -49,7 +59,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
       });
       // Do something with the selected image
     }
-    print(_chosenImage);
   }
 
   //? Load all banks
@@ -69,6 +78,53 @@ class _UpdateProfileState extends State<UpdateProfile> {
   //   logger.d(_userBankList);
   // }
 
+  void showWarning() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    _isChecked = false;
+                  },
+                  child: const Text("Yes Continue")),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Cancel"))
+            ],
+            title: Row(
+              children: [
+                Lottie.asset("assets/images/warning.json", width: 40),
+                const Text(
+                  "Are you Sure",
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                )
+              ],
+            ),
+            content: const IntrinsicHeight(
+                child: Column(
+              children: [
+                Text(
+                    "Turning off availability will make you inactive and prevent access to new job postings")
+              ],
+            )),
+          );
+        });
+  }
+
+  void _handleUpdate() {
+    // final bool isValid = _formKey.currentState!.validate();
+    if (true) {
+      print(fname);
+      print(lname);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final pageIndex = Provider.of<PageIndex>(context);
@@ -80,6 +136,10 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
     //  final FocusNode _passwordFocus = FocusNode();
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    // fname = _profile.profile.firstName;
+    // lname = _profile.profile.lastName;
+    // phone = _profile.profile.phoneNumber;
+    // bio = _profile.profile.bio;
 
     return Scaffold(
       appBar: AppBar(
@@ -111,22 +171,22 @@ class _UpdateProfileState extends State<UpdateProfile> {
                           CircleAvatar(
                             backgroundImage: selectedImage != null
                                 ? FileImage(selectedImage!)
-                                : AssetImage('assets/images/avatar.png')
+                                : AssetImage('assets/images/logo.png')
                                     as ImageProvider,
                             radius: 60,
                           ),
                           Positioned(
+                            bottom: 0,
+                            right: 0,
                             child: CircleAvatar(
+                              backgroundColor: lightBlue,
                               child: IconButton(
-                                icon: Icon(Icons.camera_alt_outlined),
+                                icon: const Icon(Icons.camera_alt_outlined),
                                 onPressed: () {
                                   _pickImageFromGallery();
                                 },
                               ),
-                              backgroundColor: lightBlue,
                             ),
-                            bottom: 0,
-                            right: 0,
                           )
                         ],
                       ),
@@ -139,36 +199,38 @@ class _UpdateProfileState extends State<UpdateProfile> {
                       child: Column(
                         children: [
                           TextFormField(
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: "First Name",
-                              border: OutlineInputBorder(),
+                              border: UnderlineInputBorder(),
+                              enabledBorder: UnderlineInputBorder(),
                             ),
-                            initialValue: _profile.profile.firstName,
+                            initialValue:fname,
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return "Please enter your first name";
                               }
                               return null;
                             },
-                            // onFieldSubmitted: (value) {
-                            //   _passwordFocus.requestFocus();
-                            // },
+                            onFieldSubmitted: (value) {
+                              fname = value;
+                            },
                           ),
                           TextFormField(
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: "Last Name",
-                              border: OutlineInputBorder(),
+                              border: UnderlineInputBorder(),
+                              enabledBorder: UnderlineInputBorder(),
                             ),
-                            initialValue: _profile.profile.lastName,
+                            initialValue: lname,
                             validator: (value) {
-                              if (value!.isEmpty) {
+                              if (value == null || value == '') {
                                 return "Please enter your last name";
                               }
                               return null;
                             },
-                            // onFieldSubmitted: (value) {
-                            //   _passwordFocus.requestFocus();
-                            // },
+                            onFieldSubmitted: (value) {
+                              lname = value;
+                            },
                           ),
                         ],
                       ),
@@ -179,40 +241,42 @@ class _UpdateProfileState extends State<UpdateProfile> {
                   height: 12,
                 ),
                 TextFormField(
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Phone Number",
-                    border: OutlineInputBorder(),
+                    border: UnderlineInputBorder(),
+                    enabledBorder: UnderlineInputBorder(),
                   ),
-                  initialValue: _profile.profile.phoneNumber,
+                  initialValue:phone,
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "Please enter your phone number";
                     }
                     return null;
                   },
-                  // onFieldSubmitted: (value) {
-                  //   _passwordFocus.requestFocus();
-                  // },
+                  onFieldSubmitted: (value) {
+                    phone = value;
+                  },
                 ),
                 const SizedBox(
                   height: 12,
                 ),
                 TextFormField(
                   maxLines: 2,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Bio",
-                    border: OutlineInputBorder(),
+                    border: UnderlineInputBorder(),
+                    enabledBorder: UnderlineInputBorder(),
                   ),
-                  initialValue: _profile.profile.bio,
+                  initialValue: bio,
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "Please enter your bio";
                     }
                     return null;
                   },
-                  // onFieldSubmitted: (value) {
-                  //   _passwordFocus.requestFocus();
-                  // },
+                  onFieldSubmitted: (value) {
+                    bio = value;
+                  },
                 ),
                 const SizedBox(
                   height: 16,
@@ -234,7 +298,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                       child: Text(bank.name),
                     );
                   }).toList(),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Choose your bank',
                   ),
                 ),
@@ -242,7 +306,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                   height: 12,
                 ),
                 TextFormField(
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Account Number",
                     border: OutlineInputBorder(),
                   ),
@@ -258,21 +322,23 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     }
                     return null;
                   },
-                  // onFieldSubmitted: (value) {
-                  //   _passwordFocus.requestFocus();
-                  // },
+                  onFieldSubmitted: (value) {
+                    accountNumber = value;
+                  },
                 ),
                 const SizedBox(
                   height: 12,
                 ),
                 CheckboxListTile(
-                  title: Text('Availability'),
-                  subtitle: Text('Are you available for jobs?'),
+                  title: const Text('Availability'),
+                  subtitle: const Text('Are you available for jobs?'),
                   value: _isChecked,
                   onChanged: (bool? newValue) {
-                    setState(() {
+                    if (newValue != true) {
+                      showWarning();
+                    } else {
                       _isChecked = newValue!;
-                    });
+                    }
                   },
                   controlAffinity: ListTileControlAffinity.leading,
                   contentPadding: EdgeInsets.all(0),
@@ -280,29 +346,32 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 const SizedBox(
                   height: 8,
                 ),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    decoration: BoxDecoration(
-                      color: lightBlue,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.mode_edit,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          "Update",
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                      ],
+                InkWell(
+                  onTap: _handleUpdate,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      decoration: const BoxDecoration(
+                        color: lightBlue,
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.mode_edit,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                            "Update",
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 )
