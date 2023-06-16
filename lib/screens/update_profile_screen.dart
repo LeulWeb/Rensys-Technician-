@@ -1,5 +1,8 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,26 +18,31 @@ import '../providers/user_bank_provider.dart';
 
 class UpdateProfile extends StatefulWidget {
   const UpdateProfile({super.key});
-
   @override
   State<UpdateProfile> createState() => _UpdateProfileState();
 }
 
 class _UpdateProfileState extends State<UpdateProfile> {
-  MainService _service = MainService();
+  final MainService _service = MainService();
   File? selectedImage;
   String? _chosenImage;
   Logger logger = Logger();
   List _banks = [];
   dynamic _selectedValue;
   bool _isChecked = true;
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+
+  // using focus nodes
+
+  late final lastNameNode;
+  late final phoneNode;
+  late final bioNode;
 
   // updated value holders
   String fname = '';
   String lname = '';
   String phone = '';
-  String? bio;
+  String bio = '';
   String bank = '';
   String accountNumber = '';
 
@@ -42,6 +50,17 @@ class _UpdateProfileState extends State<UpdateProfile> {
   void initState() {
     super.initState();
     allBanks();
+    lastNameNode = FocusNode();
+    phoneNode = FocusNode();
+    bioNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    lastNameNode.dispose();
+    phoneNode.dispose();
+    bioNode.dispose();
+    super.dispose();
   }
 
   //Pick image
@@ -118,28 +137,27 @@ class _UpdateProfileState extends State<UpdateProfile> {
   }
 
   void _handleUpdate() {
-    // final bool isValid = _formKey.currentState!.validate();
-    if (true) {
-      print(fname);
-      print(lname);
-    }
+    // if (_formKey.currentState!.validate()) {
+    //   // print(fname);
+    //   // print(lname);
+    //   // print(phone);
+    //   print(bio);
+    //   // print(accountNumber);
+    // }
+    logger.i(fname);
+    logger.i(lname);
+    logger.i(phone);
+    logger.i(bio);
   }
 
   @override
   Widget build(BuildContext context) {
     final pageIndex = Provider.of<PageIndex>(context);
-    final _profile = Provider.of<ProfileProvider>(context);
-    final _userBank = Provider.of<UserBankProvider>(context);
-    dynamic currentBank = _userBank.userBankList.first.id;
-    dynamic currentAccount = _userBank.userBankList.first.accountBalance;
-    logger.i(_userBank.userBankList);
-
-    //  final FocusNode _passwordFocus = FocusNode();
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-    // fname = _profile.profile.firstName;
-    // lname = _profile.profile.lastName;
-    // phone = _profile.profile.phoneNumber;
-    // bio = _profile.profile.bio;
+    final _profile = Provider.of<ProfileProvider>(context).profile;
+    final _userBank = Provider.of<UserBankProvider>(context).userBankList;
+    dynamic currentBank = _userBank.first.id;
+    dynamic currentAccount = _userBank.first.accountBalance;
+    logger.i(_userBank);
 
     return Scaffold(
       appBar: AppBar(
@@ -198,30 +216,38 @@ class _UpdateProfileState extends State<UpdateProfile> {
                       flex: 2,
                       child: Column(
                         children: [
+                          //? First Name
                           TextFormField(
+                            initialValue: _profile.firstName,
+                            textInputAction: TextInputAction.next,
+                            autofocus: true,
+                            keyboardType: TextInputType.text,
                             decoration: const InputDecoration(
                               labelText: "First Name",
                               border: UnderlineInputBorder(),
                               enabledBorder: UnderlineInputBorder(),
                             ),
-                            initialValue:fname,
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return "Please enter your first name";
                               }
                               return null;
                             },
+                            // textInputAction: TextInputAction.continueAction,
                             onFieldSubmitted: (value) {
                               fname = value;
+                              lastNameNode.requestFocus();
                             },
                           ),
                           TextFormField(
+                            focusNode: lastNameNode,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.next,
                             decoration: const InputDecoration(
                               labelText: "Last Name",
                               border: UnderlineInputBorder(),
                               enabledBorder: UnderlineInputBorder(),
                             ),
-                            initialValue: lname,
                             validator: (value) {
                               if (value == null || value == '') {
                                 return "Please enter your last name";
@@ -230,6 +256,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                             },
                             onFieldSubmitted: (value) {
                               lname = value;
+                              phoneNode.requestFocus();
                             },
                           ),
                         ],
@@ -240,37 +267,49 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 const SizedBox(
                   height: 12,
                 ),
+
+                // *Phone Number Field
                 TextFormField(
+                  focusNode: phoneNode,
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     labelText: "Phone Number",
                     border: UnderlineInputBorder(),
                     enabledBorder: UnderlineInputBorder(),
                   ),
-                  initialValue:phone,
+                  // initialValue: phone,
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "Please enter your phone number";
+                    } else if (value.length != 10) {
+                      return "Your phone number should be 10 digit long, 0901234567 ";
                     }
                     return null;
                   },
                   onFieldSubmitted: (value) {
-                    phone = value;
+                    phone = value.toString();
+                    bioNode.requestFocus();
                   },
                 ),
                 const SizedBox(
                   height: 12,
                 ),
+
+                // * Bio Input
                 TextFormField(
-                  maxLines: 2,
+                  focusNode: bioNode,
                   decoration: const InputDecoration(
                     labelText: "Bio",
                     border: UnderlineInputBorder(),
                     enabledBorder: UnderlineInputBorder(),
                   ),
-                  initialValue: bio,
+                  // initialValue: bio,
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "Please enter your bio";
+                    } else if (value.length > 100) {
+                      return "Your bio can not be greater than 100 character";
                     }
                     return null;
                   },
@@ -287,10 +326,10 @@ class _UpdateProfileState extends State<UpdateProfile> {
                   value: _selectedValue,
                   onChanged: (newValue) {
                     // Set the selected value
-                    setState(() {
-                      _selectedValue = newValue;
-                    });
-                    print(_selectedValue);
+                    // setState(() {
+                    //   _selectedValue = newValue;
+                    // });
+                    // print(_selectedValue);
                   },
                   items: _banks.map((bank) {
                     return DropdownMenuItem(
@@ -310,9 +349,9 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     labelText: "Account Number",
                     border: OutlineInputBorder(),
                   ),
-                  initialValue: _userBank.userBankList
+                  initialValue: _userBank
                           .any((element) => element.id == _selectedValue)
-                      ? _userBank.userBankList
+                      ? _userBank
                           .firstWhere((element) => element.id == _selectedValue)
                           .accountBalance
                       : "",
@@ -325,6 +364,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                   onFieldSubmitted: (value) {
                     accountNumber = value;
                   },
+                  textInputAction: TextInputAction.done,
                 ),
                 const SizedBox(
                   height: 12,
@@ -341,7 +381,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     }
                   },
                   controlAffinity: ListTileControlAffinity.leading,
-                  contentPadding: EdgeInsets.all(0),
+                  contentPadding: const EdgeInsets.all(0),
                 ),
                 const SizedBox(
                   height: 8,

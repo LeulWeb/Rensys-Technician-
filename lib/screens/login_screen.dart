@@ -19,8 +19,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  String phoneNumber = '';
-  String password = '';
   final graphqlService = GraphQLService();
   final FocusNode _passwordFocus = FocusNode();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -34,6 +32,8 @@ class _LoginState extends State<Login> {
   bool showPassword = true;
   Logger logger = Logger();
 
+  String phoneNumber = '';
+  String password = '';
   @override
   void initState() {
     super.initState();

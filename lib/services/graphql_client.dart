@@ -2,7 +2,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GraphQLConfig {
-  static HttpLink httpLink = HttpLink("http://10.161.82.69/v1/graphql");
+  static HttpLink httpLink = HttpLink("http://10.161.83.167/v1/graphql");
   static SharedPreferences? loginData;
   static String? accessToken = '';
 
