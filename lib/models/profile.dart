@@ -11,7 +11,7 @@ class Profile {
     required this.isVerified,
     required this.phoneNumber,
     required this.package,
-
+    required this.id,
   });
 
   final String firstName;
@@ -20,6 +20,7 @@ class Profile {
   final String? bio;
   final String phoneNumber;
   final bool isVerified;
+  final String id;
 
   //*Work on base 64 later
   final String? avatar;
@@ -28,6 +29,7 @@ class Profile {
 
   static Profile fromMap(Map map) {
     return Profile(
+      id: map["id"],
       firstName: map["first_name"],
       lastName: map["last_name"],
       bio: map["bios"],
@@ -42,6 +44,7 @@ class Profile {
 
 class ProfileProvider with ChangeNotifier{
   Profile _profile = Profile(
+    id: "",
     firstName: "",
     lastName: "",
     bio: "",

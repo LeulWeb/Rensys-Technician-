@@ -232,7 +232,7 @@ class MainService {
       }
 
       final List fromJson = response.data?["subscription_plan"];
-  
+
       final List<BundlePackage> toModel =
           fromJson.map((e) => BundlePackage.fromJson(e)).toList();
 
@@ -337,6 +337,7 @@ class MainService {
     const techQuery = '''
       query MyQuery {
   technician {
+    id
     availability
     avator
     bios
@@ -379,12 +380,11 @@ class MainService {
     }
   }
 
-
-
-
-
   //Buying package
-  Future<bool> buyPackage({required String subId, required String receiptNumber , required num amount}) async{
+  Future<bool> buyPackage(
+      {required String subId,
+      required String receiptNumber,
+      required num amount}) async {
     const buyPackageQuery = '''
       mutation MyMutation(\$amount: Float!, \$receipt_number: String !, \$subscription_plan_id: uuid!) {
   insert_subscription_one(object: {amount: \$amount, receipt_number: \$receipt_number, subscription_plan_id: \$subscription_plan_id}) {
@@ -393,27 +393,51 @@ class MainService {
 }
   ''';
 
-  try {
-    QueryResult response = await client.mutate(
-      MutationOptions(
-        document: gql(buyPackageQuery),
-        variables: {
-          "amount": amount,
-          "receipt_number": receiptNumber,
-          "subscription_plan_id": subId,
-        },
-      ),
-    );
+    try {
+      QueryResult response = await client.mutate(
+        MutationOptions(
+          document: gql(buyPackageQuery),
+          variables: {
+            "amount": amount,
+            "receipt_number": receiptNumber,
+            "subscription_plan_id": subId,
+          },
+        ),
+      );
 
-    if (response.hasException) {
-      throw Exception(response.exception);
+      if (response.hasException) {
+        throw Exception(response.exception);
+      }
+      logger.d(response.data!["insert_subscription_one"]["id"],
+          "Response from buying package");
+      return true;
+    } catch (e) {
+      throw Exception(e);
     }
-    logger.d(response.data!["insert_subscription_one"]["id"], "Response from buying package");
-    return true;
-  } catch (e) {
-    throw Exception(e);
   }
-  
 
+  Future<QueryResult> updateProfile(Profile profile) async {
+    const String updateProfileQuery = '''
+        mutation MyMutation(\$phone_number: String!, \$last_name: String!, \$first_name: String!, \$bios: String!, \$id: uuid!) {
+  update_technician_by_pk(pk_columns: {id: \$id}, _set: {phone_number: \$phone_number, last_name: \$last_name, first_name: \$first_name, bios: \$bios}) {
+    id
+  }
+}
+    ''';
+
+    try {
+      QueryResult result = await client.mutate(
+          MutationOptions(document: gql(updateProfileQuery), variables: {
+        "first_name": profile.firstName,
+        "last_name": profile.lastName,
+        "phone_number": profile.phoneNumber,
+        "bios": profile.bio,
+        "id": profile.id
+      }));
+
+      return result;
+    } catch (err) {
+      throw Exception(err);
+    }
   }
 }

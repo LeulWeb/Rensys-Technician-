@@ -2,8 +2,6 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
@@ -24,6 +22,10 @@ class UpdateProfile extends StatefulWidget {
 
 class _UpdateProfileState extends State<UpdateProfile> {
   final MainService _service = MainService();
+  bool isLoading = false;
+  bool isUpdate = false;
+  String errMessage = '';
+
   File? selectedImage;
   String? _chosenImage;
   Logger logger = Logger();
@@ -31,20 +33,49 @@ class _UpdateProfileState extends State<UpdateProfile> {
   dynamic _selectedValue;
   bool _isChecked = true;
   final _formKey = GlobalKey<FormState>();
+  Profile _initProfile = Profile(
+      firstName: "",
+      lastName: "",
+      isAvailable: false,
+      isVerified: false,
+      phoneNumber: "",
+      package: 0,
+      bio: "",
+      id: "");
 
+  Profile _userProfile = Profile(
+    id: "",
+    firstName: "",
+    lastName: "",
+    isAvailable: false,
+    isVerified: false,
+    phoneNumber: "",
+    package: 0,
+    bio: "",
+  );
+
+  @override
+  void didChangeDependencies() {
+    _initProfile = Provider.of<ProfileProvider>(context).profile;
+    _userProfile = Profile(
+      id: _initProfile.id,
+      firstName: _initProfile.firstName,
+      lastName: _initProfile.lastName,
+      isAvailable: _initProfile.isAvailable,
+      isVerified: _initProfile.isAvailable,
+      phoneNumber: _initProfile.phoneNumber,
+      package: _initProfile.package,
+      bio: _initProfile.bio,
+    );
+    super.didChangeDependencies();
+  }
   // using focus nodes
 
   late final lastNameNode;
   late final phoneNode;
   late final bioNode;
 
-  // updated value holders
-  String fname = '';
-  String lname = '';
-  String phone = '';
-  String bio = '';
-  String bank = '';
-  String accountNumber = '';
+  // final Profile _userprofile = Profile(firstName: '', lastName: '', isAvailable: true, bio: '', phoneNumber: '', isVerified: true, package: 0);
 
   @override
   void initState() {
@@ -136,28 +167,84 @@ class _UpdateProfileState extends State<UpdateProfile> {
         });
   }
 
+  void showBar(
+      Widget snack, String snackLabel, Color ctxColor, VoidCallback doSnack) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: ctxColor,
+        content: snack,
+        // showCloseIcon: true,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  Future<void> loadUpdate(Profile profile) async {
+    try {
+      final result = await _service.updateProfile(profile);
+
+      logger.d(result.data?["id"]);
+      if (result.hasException) {
+        logger.d(result.exception!.graphqlErrors[0].message);
+        setState(() {
+          errMessage = result.exception!.graphqlErrors[0].message.toString();
+        });
+      }
+
+
+
+      if (result.data?["id"] == profile.id) {
+        setState(() {
+          isUpdate = true;
+        });
+      }
+    } catch (err) {
+      throw Exception(err);
+    }
+  }
+
   void _handleUpdate() {
-    // if (_formKey.currentState!.validate()) {
-    //   // print(fname);
-    //   // print(lname);
-    //   // print(phone);
-    //   print(bio);
-    //   // print(accountNumber);
-    // }
-    logger.i(fname);
-    logger.i(lname);
-    logger.i(phone);
-    logger.i(bio);
+    // logger.d(_userProfile.firstName);
+    bool isValid = _formKey.currentState!.validate();
+    if (isValid) {
+      _formKey.currentState!.save();
+      setState(() {
+        isLoading = true;
+        errMessage = '';
+      });
+      loadUpdate(_userProfile);
+
+      if (isUpdate) {
+        showBar(const Text("Profile has been updated successfully."), "",
+            Colors.green, () {
+          // Some code to undo the change.
+        });
+      } else {
+        showBar(
+             Text(
+              errMessage
+            ),
+            errMessage,
+            Colors.red, () {
+          // Some code to undo the change.
+        });
+      }
+      setState(() {
+        isLoading = false;
+      });
+      Provider.of<PageIndex>(context, listen: false).navigateTo(3);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final pageIndex = Provider.of<PageIndex>(context);
-    final _profile = Provider.of<ProfileProvider>(context).profile;
-    final _userBank = Provider.of<UserBankProvider>(context).userBankList;
-    dynamic currentBank = _userBank.first.id;
-    dynamic currentAccount = _userBank.first.accountBalance;
-    logger.i(_userBank);
+    // final _userBank = Provider.of<UserBankProvider>(context).userBankList;
+    // dynamic currentBank = _userBank.first.id;
+    // dynamic currentAccount = _userBank.first.accountBalance;
+    logger.d(_userProfile.firstName);
 
     return Scaffold(
       appBar: AppBar(
@@ -189,7 +276,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                           CircleAvatar(
                             backgroundImage: selectedImage != null
                                 ? FileImage(selectedImage!)
-                                : AssetImage('assets/images/logo.png')
+                                : AssetImage('assets/images/profile.jpg')
                                     as ImageProvider,
                             radius: 60,
                           ),
@@ -218,7 +305,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                         children: [
                           //? First Name
                           TextFormField(
-                            initialValue: _profile.firstName,
+                            initialValue: _initProfile.firstName,
                             textInputAction: TextInputAction.next,
                             autofocus: true,
                             keyboardType: TextInputType.text,
@@ -235,12 +322,26 @@ class _UpdateProfileState extends State<UpdateProfile> {
                             },
                             // textInputAction: TextInputAction.continueAction,
                             onFieldSubmitted: (value) {
-                              fname = value;
                               lastNameNode.requestFocus();
                             },
+                            onSaved: (newValue) {
+                              _userProfile = Profile(
+                                id: _userProfile.id,
+                                firstName: newValue!,
+                                lastName: _userProfile.lastName,
+                                isAvailable: _userProfile.isAvailable,
+                                isVerified: _userProfile.isVerified,
+                                phoneNumber: _userProfile.phoneNumber,
+                                package: _userProfile.package,
+                                bio: _userProfile.bio,
+                              );
+                            },
                           ),
+
+                          //* Last Name in
                           TextFormField(
                             focusNode: lastNameNode,
+                            initialValue: _userProfile.lastName,
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.next,
                             decoration: const InputDecoration(
@@ -255,8 +356,18 @@ class _UpdateProfileState extends State<UpdateProfile> {
                               return null;
                             },
                             onFieldSubmitted: (value) {
-                              lname = value;
                               phoneNode.requestFocus();
+                            },
+                            onSaved: (newValue) {
+                              _userProfile = Profile(
+                                  id: _userProfile.id,
+                                  firstName: _userProfile.firstName,
+                                  lastName: newValue!,
+                                  isAvailable: _userProfile.isAvailable,
+                                  isVerified: _userProfile.isVerified,
+                                  phoneNumber: _userProfile.phoneNumber,
+                                  package: _userProfile.package,
+                                  bio: _userProfile.bio);
                             },
                           ),
                         ],
@@ -272,6 +383,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 TextFormField(
                   focusNode: phoneNode,
                   textInputAction: TextInputAction.next,
+                  initialValue: _userProfile.phoneNumber,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     labelText: "Phone Number",
@@ -288,8 +400,18 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     return null;
                   },
                   onFieldSubmitted: (value) {
-                    phone = value.toString();
                     bioNode.requestFocus();
+                  },
+                  onSaved: (newValue) {
+                    _userProfile = Profile(
+                        id: _userProfile.id,
+                        firstName: _userProfile.firstName,
+                        lastName: _userProfile.lastName,
+                        isAvailable: _userProfile.isAvailable,
+                        isVerified: _userProfile.isVerified,
+                        phoneNumber: newValue!,
+                        package: _userProfile.package,
+                        bio: _userProfile.bio);
                   },
                 ),
                 const SizedBox(
@@ -299,6 +421,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 // * Bio Input
                 TextFormField(
                   focusNode: bioNode,
+                  initialValue: _userProfile.bio,
                   decoration: const InputDecoration(
                     labelText: "Bio",
                     border: UnderlineInputBorder(),
@@ -313,62 +436,70 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     }
                     return null;
                   },
-                  onFieldSubmitted: (value) {
-                    bio = value;
+                  onFieldSubmitted: (value) {},
+                  onSaved: (newValue) {
+                    _userProfile = Profile(
+                        id: _userProfile.id,
+                        firstName: _userProfile.firstName,
+                        lastName: _userProfile.lastName,
+                        isAvailable: _userProfile.isAvailable,
+                        isVerified: _userProfile.isVerified,
+                        phoneNumber: _userProfile.phoneNumber,
+                        package: _userProfile.package,
+                        bio: newValue!);
                   },
                 ),
                 const SizedBox(
                   height: 16,
                 ),
 
+                //* Section two working with banks
                 //This is for adding new bank account
-                DropdownButtonFormField(
-                  value: _selectedValue,
-                  onChanged: (newValue) {
-                    // Set the selected value
-                    // setState(() {
-                    //   _selectedValue = newValue;
-                    // });
-                    // print(_selectedValue);
-                  },
-                  items: _banks.map((bank) {
-                    return DropdownMenuItem(
-                      value: bank.id,
-                      child: Text(bank.name),
-                    );
-                  }).toList(),
-                  decoration: const InputDecoration(
-                    labelText: 'Choose your bank',
-                  ),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: "Account Number",
-                    border: OutlineInputBorder(),
-                  ),
-                  initialValue: _userBank
-                          .any((element) => element.id == _selectedValue)
-                      ? _userBank
-                          .firstWhere((element) => element.id == _selectedValue)
-                          .accountBalance
-                      : "",
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return "Please enter your account number";
-                    }
-                    return null;
-                  },
-                  onFieldSubmitted: (value) {
-                    accountNumber = value;
-                  },
-                  textInputAction: TextInputAction.done,
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
+                // DropdownButtonFormField(
+                //   value: _selectedValue,
+                //   onChanged: (newValue) {
+                //     // Set the selected value
+                //     // setState(() {
+                //     //   _selectedValue = newValue;
+                //     // });
+                //     // print(_selectedValue);
+                //   },
+                //   items: _banks.map((bank) {
+                //     return DropdownMenuItem(
+                //       value: bank.id,
+                //       child: Text(bank.name),
+                //     );
+                //   }).toList(),
+                //   decoration: const InputDecoration(
+                //     labelText: 'Choose your bank',
+                //   ),
+                // ),
+                // const SizedBox(
+                //   height: 12,
+                // ),
+                // TextFormField(
+                //   decoration: const InputDecoration(
+                //     labelText: "Account Number",
+                //     border: OutlineInputBorder(),
+                //   ),
+                //   initialValue: _userBank
+                //           .any((element) => element.id == _selectedValue)
+                //       ? _userBank
+                //           .firstWhere((element) => element.id == _selectedValue)
+                //           .accountBalance
+                //       : "",
+                //   validator: (value) {
+                //     if (value!.isEmpty) {
+                //       return "Please enter your account number";
+                //     }
+                //     return null;
+                //   },
+                //   onFieldSubmitted: (value) {},
+                //   textInputAction: TextInputAction.done,
+                // ),
+                // const SizedBox(
+                //   height: 12,
+                // ),
                 CheckboxListTile(
                   title: const Text('Availability'),
                   subtitle: const Text('Are you available for jobs?'),
