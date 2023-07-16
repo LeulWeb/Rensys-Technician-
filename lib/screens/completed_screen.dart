@@ -23,11 +23,13 @@ class _CompletedScreenState extends State<CompletedScreen> {
 
   @override
   void initState() {
+    loadServicesList();
     super.initState();
   }
 
   void loadServicesList() async {
     result = await service.getService(context, "completed");
+    print(result!.data);
   }
 
   @override
@@ -68,11 +70,7 @@ class _CompletedScreenState extends State<CompletedScreen> {
 
               //Listing the available jobs
               serviceList.completedServiceList.isEmpty
-                  ? const EmptyData(
-                      title: "Nothing Completed",
-                      description:
-                          "No completed jobs available. Please select a new job to claim and complete.",
-                    )
+                  ? const Text("No completed jobs")
                   : Expanded(
                       child: ListView.builder(
                         itemCount: serviceList.completedServiceList.length,

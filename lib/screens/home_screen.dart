@@ -186,14 +186,7 @@ class _HomeState extends State<Home> {
                     //The Grid Components
                     Expanded(
                       child: Consumer<PageIndex>(
-                        builder: (context, value, child) => GridView(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 5,
-                            mainAxisSpacing: 5,
-                            childAspectRatio: 5 / 4,
-                          ),
+                        builder: (context, value, child) => ListView(
                           children: [
                             ActionCard(
                                 custom_badge:
@@ -242,22 +235,22 @@ class _HomeState extends State<Home> {
                                 title: AppLocalizations.of(context)!.package,
                                 description:
                                     AppLocalizations.of(context)!.packageDesc),
-                            ActionCard(
-                              colors: [yellow, yellow],
-                              custom_badge: null,
-                              goTo: () {
-                                value.navigateTo(6);
-                              },
-                              color: Colors.red,
-                              title: AppLocalizations.of(context)!.recent,
-                              ActionIcon: const Icon(
-                                Icons.access_time,
-                                color: Colors.white,
-                                size: 50,
-                              ),
-                              description:
-                                  AppLocalizations.of(context)!.recentDesc,
-                            ),
+                            // ActionCard(
+                            //   colors: [yellow, yellow],
+                            //   custom_badge: null,
+                            //   goTo: () {
+                            //     value.navigateTo(6);
+                            //   },
+                            //   color: Colors.red,
+                            //   title: AppLocalizations.of(context)!.recent,
+                            //   ActionIcon: const Icon(
+                            //     Icons.access_time,
+                            //     color: Colors.white,
+                            //     size: 50,
+                            //   ),
+                            //   description:
+                            //       AppLocalizations.of(context)!.recentDesc,
+                            // ),
                           ],
                         ),
                       ),

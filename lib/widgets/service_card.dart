@@ -30,9 +30,17 @@ class ServiceCard extends StatefulWidget {
 }
 
 class _ServiceCardState extends State<ServiceCard> {
+  void goToAccessory() {
+    final pageIndex = Provider.of<PageIndex>(context, listen: false);
+    final idProvider = Provider.of<IDProvider>(context, listen: false);
+    idProvider.setService(widget.service);
+    pageIndex.navigateTo(8);
+  }
+
   @override
   Widget build(BuildContext context) {
     final pageIndex = Provider.of<PageIndex>(context);
+    // final IdProvider = Provider.of<IDProvider>(context);
 
     return Consumer<IDProvider>(
       builder: (context, value, child) {
@@ -214,7 +222,10 @@ class _ServiceCardState extends State<ServiceCard> {
 
                     widget.showNeedAccessory
                         ? TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              goToAccessory();
+                              // pageIndex.navigateTo(8);
+                            },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: const [
@@ -245,9 +256,9 @@ class _ServiceCardState extends State<ServiceCard> {
                                 color: darkBlue,
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: Row(
+                              child: const Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
+                                children: [
                                   Icon(
                                     Icons.handyman,
                                     color: Colors.white,

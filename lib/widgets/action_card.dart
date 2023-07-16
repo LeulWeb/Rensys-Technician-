@@ -22,47 +22,73 @@ class ActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(18),
-      child: InkWell(
-        onTap: () {
-          goTo();
-        },
-        child: Container(
-          decoration: BoxDecoration(
-              gradient:
-                  LinearGradient(colors: colors, begin: Alignment.topCenter)),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(child: Container()),
-              Text(
-                title,
-                style: TextStyle(color: Colors.white),
-              ),
-              Expanded(child: Container()),
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  ActionIcon,
-                  custom_badge != null
-                      ? Positioned(
-                          top: 0,
-                          right: 0,
-                          child: custom_badge!,
-                        )
-                      : Container()
-                ],
-              ),
-              Expanded(child: Container()),
-              Text(
-                description,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white),
-              ),
-              Expanded(child: Container()),
-            ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          onTap: () {
+            goTo();
+          },
+          child: Container(
+            decoration: BoxDecoration(
+                gradient:
+                    LinearGradient(colors: colors, begin: Alignment.topCenter)),
+            child: Row(
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(
+                  width: 20,
+                ),
+
+                // Expanded(child: Container()),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ActionIcon,
+                    custom_badge != null
+                        ? Positioned(
+                            top: 0,
+                            right: 0,
+                            child: custom_badge!,
+                          )
+                        : Container()
+                  ],
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      title,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    // Expanded(child: Container()),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Text(
+                      description,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                ),
+                // Expanded(child: Container()),
+              ],
+            ),
           ),
         ),
       ),

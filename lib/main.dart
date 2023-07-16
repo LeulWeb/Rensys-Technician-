@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:technician_rensys/constants/colors.dart';
+import 'package:technician_rensys/providers/accessory_list.dart';
 import 'package:technician_rensys/providers/all_banks.dart';
 import 'package:technician_rensys/providers/bundle_package_provider.dart';
 import 'package:technician_rensys/providers/id_provider.dart';
@@ -17,7 +18,6 @@ import 'package:technician_rensys/screens/splash_screen.dart';
 import './services/graphql_client.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'models/profile.dart';
-
 
 void main(List<String> args) async {
   await initHiveForFlutter();
@@ -67,6 +67,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => AccessoryProvider()),
         ChangeNotifierProvider(create: (context) => PageIndex()),
         ChangeNotifierProvider(create: (_) => JobList()),
         ChangeNotifierProvider(create: (_) => ServiceList()),
@@ -91,7 +92,7 @@ class _MyAppState extends State<MyApp> {
         darkTheme: ThemeData.dark().copyWith(
           scaffoldBackgroundColor: darkBackground,
         ),
-        themeMode: ThemeMode.system,
+        themeMode: ThemeMode.light,
         home: SplashPage(
           setLocale: setLocale,
         ),

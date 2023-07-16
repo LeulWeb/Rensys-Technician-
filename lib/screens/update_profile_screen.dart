@@ -55,6 +55,9 @@ class _UpdateProfileState extends State<UpdateProfile> {
     bio: "",
   );
 
+  String bId = '';
+  String aNumber = '';
+
   //Dealing with all banks
   var ubank = UserBank(id: "", accountBalance: "", name: "", bankId: "");
   List<UserBank> userBankList = [];
@@ -177,9 +180,12 @@ class _UpdateProfileState extends State<UpdateProfile> {
     );
   }
 
-  Future<void> loadUpdate(Profile profile) async {
+  Future<void> loadUpdate(Profile profile,
+      {required String bid, required String acNumber}) async {
     try {
       final result = await _service.updateProfile(profile);
+      final response =
+          await _service.updateBank(id: bid, accountNumber: acNumber);
 
       if (result.data?["update_technician_by_pk"]["id"] == profile.id) {
         setState(() {
@@ -213,7 +219,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
         isLoading = true;
         errMessage = '';
       });
-      await loadUpdate(_userProfile);
+      await loadUpdate(_userProfile, bid: _selectedValue, acNumber: aNumber);
 
       logger.d(isUpdate);
       if (isUpdate) {
@@ -464,6 +470,11 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     //   _selectedValue = newValue;
                     // });
                   },
+                  onSaved: (newValue) {
+                    setState(() {
+                      _selectedValue = newValue;
+                    });
+                  },
                   items: userBankList.map((bank) {
                     return DropdownMenuItem(
                       value: bank.id,
@@ -478,20 +489,28 @@ class _UpdateProfileState extends State<UpdateProfile> {
                   height: 12,
                 ),
 
-                // TextFormField(
-                //   decoration: const InputDecoration(
-                //     labelText: "Account Number",
-                //     border: OutlineInputBorder(),
-                //   ),
-                //   validator: (value) {
-                //     if (value!.isEmpty) {
-                //       return "Please enter your account number";
-                //     }
-                //     return null;
-                //   },
-                //   onFieldSubmitted: (value) {},
-                //   textInputAction: TextInputAction.done,
-                // ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: "Account Number",
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Please enter your account number";
+                    }
+                    return null;
+                  },
+                  onSaved: (newValue) {
+                    setState(() {
+                      aNumber = newValue!;
+                    });
+
+                    logger.d(aNumber, "Account Number");
+                    logger.d(_selectedValue, "Bank Id");
+                  },
+                  onFieldSubmitted: (value) {},
+                  textInputAction: TextInputAction.done,
+                ),
 
                 const SizedBox(
                   height: 12,

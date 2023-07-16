@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:logger/logger.dart';
@@ -7,8 +9,10 @@ import 'package:provider/provider.dart';
 import 'package:technician_rensys/models/bundle_package.dart';
 import 'package:technician_rensys/models/service.dart';
 import 'package:technician_rensys/models/user_bank.dart';
+import 'package:technician_rensys/providers/accessory_list.dart';
 import 'package:technician_rensys/providers/all_banks.dart';
 import 'package:technician_rensys/providers/service_list.dart';
+import '../models/accessory.dart';
 import '../models/job.dart';
 import '../models/profile.dart';
 import '../providers/bundle_package_provider.dart';
@@ -153,13 +157,17 @@ class MainService {
             }),
       );
 
+      // logger.d(result.data, "Service List");
+
       final List<dynamic> mapList = await result.data?["service_request"];
 
-      // logger.d(mapList);
+      // logger.d(mapList, "Map List");
 
       final List<ServiceModel> modelList =
           mapList.map((e) => ServiceModel.fromMap(e)).toList();
       // set it to provider
+
+      // logger.d(modelList, "Model List");
       final myProvider = Provider.of<ServiceList>(context, listen: false);
       if (serviceStatus == "progress") {
         myProvider.setServices(modelList);
@@ -314,15 +322,18 @@ class MainService {
         ),
       );
 
+      // logger.d(response.data!["technician"][0]["bank_accounts"], "Bank Account");
+
       if (response.hasException) {
         throw Exception(response.exception);
       }
 
-      final List<dynamic> jsonBankList = response.data!["bank_accounts"];
-      // logger.d(jsonBankList, "Bank List");
+      final List<dynamic> jsonBankList =
+          response.data!["technician"][0]["bank_accounts"];
+      logger.d(jsonBankList, "Bank List");
       final List<UserBank> _userBankList =
           jsonBankList.map((e) => UserBank.fromMap(e)).toList();
-      // logger.d(_userBankList);
+      logger.d(_userBankList);
       final userBankProvider =
           Provider.of<UserBankProvider>(context, listen: false);
       userBankProvider.setBankList(_userBankList);
@@ -444,4 +455,125 @@ class MainService {
       throw Exception(err);
     }
   }
+
+  //Querying list of Accessories
+  Future<QueryResult> getAccessories(BuildContext context) async {
+    const String getAccessoriesQuery = '''
+   query MyQuery {
+  accessory {
+    images
+    name
+    description
+    id
+  }
+}
+''';
+
+    try {
+      QueryResult result = await client.query(
+        QueryOptions(
+          document: gql(getAccessoriesQuery),
+          fetchPolicy: FetchPolicy.networkOnly,
+        ),
+      );
+
+      if (result.hasException) {
+        throw Exception(result.exception);
+      }
+
+      final List<dynamic> jsonList = result.data!["accessory"];
+
+      final List<Accessory> _accessoryList =
+          jsonList.map((e) => Accessory.fromMap(e)).toList();
+      Provider.of<AccessoryProvider>(context, listen: false)
+          .setAccessoryList(_accessoryList);
+      return result;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  //Mutation for requesting accessory
+  Future<QueryResult> requestAccessory(
+      {required String accessoryId,
+      required String serviceId,
+      required String description,
+      int quantity = 1}) async {
+    const String requestAccessoryQuery = '''
+        mutation MyMutation(\$accessory_id: uuid!, \$quantity: Int!, \$reason: String !, \$service_req_id: uuid !) {
+        insert_accessory_request_one(object: {accessory_id: \$accessory_id, quantity: \$quantity, reason: \$reason, service_req_id: \$service_req_id}) {
+        accessory {
+          name
+        }
+     }
+    }
+    ''';
+
+    try {
+      QueryResult result = await client.mutate(
+        MutationOptions(
+          document: gql(requestAccessoryQuery),
+          variables: {
+            "accessory_id": accessoryId,
+            "quantity": quantity,
+            "reason": description,
+            "service_req_id": serviceId,
+          },
+          fetchPolicy: FetchPolicy.networkOnly,
+        ),
+      );
+
+      if (result.hasException) {
+        throw Exception(result.exception);
+      }
+
+      return result;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+
+
+  // update bank
+  Future<QueryResult> updateBank(
+      {required String id,
+      required String accountNumber,
+     }) async {
+    const String updateBank = '''
+        mutation MyMutation(\$id: uuid!, \$account_number: String!) {
+        update_bank_account_by_pk(pk_columns: {id: \$id}, _set: {account_number: \$account_number}) {
+        account_number
+        bank {
+        name
+      }
+    }
+    }
+
+    ''';
+
+    try {
+      QueryResult result = await client.mutate(
+        MutationOptions(
+          document: gql(updateBank),
+          variables: {
+           "id": id,
+            "account_number": accountNumber,
+          },
+          fetchPolicy: FetchPolicy.networkOnly,
+        ),
+      );
+
+      if (result.hasException) {
+        throw Exception(result.exception);
+      }
+
+      return result;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+
+
 }
