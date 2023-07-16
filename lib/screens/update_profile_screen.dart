@@ -8,6 +8,8 @@ import 'package:logger/logger.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:technician_rensys/constants/colors.dart';
+import 'package:technician_rensys/models/user_bank.dart';
+import 'package:technician_rensys/providers/all_banks.dart';
 import 'package:technician_rensys/services/main_service.dart';
 
 import '../models/profile.dart';
@@ -29,7 +31,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
   File? selectedImage;
   String? _chosenImage;
   Logger logger = Logger();
-  List _banks = [];
   dynamic _selectedValue;
   bool _isChecked = true;
   final _formKey = GlobalKey<FormState>();
@@ -54,6 +55,10 @@ class _UpdateProfileState extends State<UpdateProfile> {
     bio: "",
   );
 
+  //Dealing with all banks
+  var ubank = UserBank(id: "", accountBalance: "", name: "", bankId: "");
+  List<UserBank> userBankList = [];
+
   @override
   void didChangeDependencies() {
     _initProfile = Provider.of<ProfileProvider>(context).profile;
@@ -67,6 +72,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
       package: _initProfile.package,
       bio: _initProfile.bio,
     );
+
+    userBankList = Provider.of<UserBankProvider>(context).userBankList;
     super.didChangeDependencies();
   }
   // using focus nodes
@@ -75,12 +82,9 @@ class _UpdateProfileState extends State<UpdateProfile> {
   late final phoneNode;
   late final bioNode;
 
-  // final Profile _userprofile = Profile(firstName: '', lastName: '', isAvailable: true, bio: '', phoneNumber: '', isVerified: true, package: 0);
-
   @override
   void initState() {
     super.initState();
-    allBanks();
     lastNameNode = FocusNode();
     phoneNode = FocusNode();
     bioNode = FocusNode();
@@ -109,14 +113,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
       });
       // Do something with the selected image
     }
-  }
-
-  //? Load all banks
-  void allBanks() async {
-    List _bankList = await _service.getAllBanks(context);
-    setState(() {
-      _banks = _bankList;
-    });
   }
 
   //? Load all user banks
@@ -245,9 +241,11 @@ class _UpdateProfileState extends State<UpdateProfile> {
   Widget build(BuildContext context) {
     final pageIndex = Provider.of<PageIndex>(context);
     // final _userBank = Provider.of<UserBankProvider>(context).userBankList;
+    // logger.d(_userBank[0].id);
+    // logger.d(_userBank[0].accountBalance);
     // dynamic currentBank = _userBank.first.id;
     // dynamic currentAccount = _userBank.first.accountBalance;
-    logger.d(_userProfile.firstName);
+    // logger.d(_userProfile.firstName);
 
     return Scaffold(
       appBar: AppBar(
@@ -457,40 +455,34 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 ),
 
                 //* Section two working with banks
-                //This is for adding new bank account
-                // DropdownButtonFormField(
-                //   value: _selectedValue,
-                //   onChanged: (newValue) {
-                //     // Set the selected value
-                //     // setState(() {
-                //     //   _selectedValue = newValue;
-                //     // });
-                //     // print(_selectedValue);
-                //   },
-                //   items: _banks.map((bank) {
-                //     return DropdownMenuItem(
-                //       value: bank.id,
-                //       child: Text(bank.name),
-                //     );
-                //   }).toList(),
-                //   decoration: const InputDecoration(
-                //     labelText: 'Choose your bank',
-                //   ),
-                // ),
-                // const SizedBox(
-                //   height: 12,
-                // ),
+
+                // This is for adding new bank account
+                DropdownButtonFormField(
+                  value: _selectedValue,
+                  onChanged: (newValue) {
+                    // setState(() {
+                    //   _selectedValue = newValue;
+                    // });
+                  },
+                  items: userBankList.map((bank) {
+                    return DropdownMenuItem(
+                      value: bank.id,
+                      child: Text(bank.name),
+                    );
+                  }).toList(),
+                  decoration: const InputDecoration(
+                    labelText: 'Choose your bank',
+                  ),
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+
                 // TextFormField(
                 //   decoration: const InputDecoration(
                 //     labelText: "Account Number",
                 //     border: OutlineInputBorder(),
                 //   ),
-                //   initialValue: _userBank
-                //           .any((element) => element.id == _selectedValue)
-                //       ? _userBank
-                //           .firstWhere((element) => element.id == _selectedValue)
-                //           .accountBalance
-                //       : "",
                 //   validator: (value) {
                 //     if (value!.isEmpty) {
                 //       return "Please enter your account number";
@@ -500,9 +492,10 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 //   onFieldSubmitted: (value) {},
                 //   textInputAction: TextInputAction.done,
                 // ),
-                // const SizedBox(
-                //   height: 12,
-                // ),
+
+                const SizedBox(
+                  height: 12,
+                ),
                 CheckboxListTile(
                   title: const Text('Availability'),
                   subtitle: const Text('Are you available for jobs?'),
@@ -521,7 +514,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                   height: 8,
                 ),
                 InkWell(
-                  onTap: _handleUpdate,
+                  onTap: isLoading ? () {} : _handleUpdate,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
@@ -530,22 +523,41 @@ class _UpdateProfileState extends State<UpdateProfile> {
                       decoration: const BoxDecoration(
                         color: lightBlue,
                       ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.mode_edit,
-                            color: Colors.white,
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Text(
-                            "Update",
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          ),
-                        ],
-                      ),
+                      child: isLoading
+                          ? const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.hourglass_bottom,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  "Loading...",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18),
+                                ),
+                              ],
+                            )
+                          : const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.mode_edit,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  "Update",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18),
+                                ),
+                              ],
+                            ),
                     ),
                   ),
                 )

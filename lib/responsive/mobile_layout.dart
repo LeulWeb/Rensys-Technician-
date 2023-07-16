@@ -43,7 +43,7 @@ class _MobileState extends State<Mobile> {
       const Report(),
       const Request(),
       const BuyCoin(),
-      const UpdateProfile(),
+       UpdateProfile(),
     ];
   }
 

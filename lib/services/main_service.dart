@@ -290,15 +290,19 @@ class MainService {
 
   Future<List<UserBank>> getBankAccount(BuildContext context) async {
     const bankQuery = '''
-    query MyQuery {
-  bank_account {
-    account_number
-    bank_id
-    bank {
-      name
+ query MyQuery {
+  technician {
+    bank_accounts {
+      account_number
+      bank_id
+      id
+      bank {
+        name
+      }
     }
   }
 }
+
 
 ''';
 
@@ -314,7 +318,7 @@ class MainService {
         throw Exception(response.exception);
       }
 
-      final List<dynamic> jsonBankList = response.data!["bank_account"];
+      final List<dynamic> jsonBankList = response.data!["bank_accounts"];
       // logger.d(jsonBankList, "Bank List");
       final List<UserBank> _userBankList =
           jsonBankList.map((e) => UserBank.fromMap(e)).toList();
