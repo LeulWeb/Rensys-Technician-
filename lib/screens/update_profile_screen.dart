@@ -185,19 +185,22 @@ class _UpdateProfileState extends State<UpdateProfile> {
     try {
       final result = await _service.updateProfile(profile);
 
-      logger.d(result.data?["id"]);
+      if (result.data?["update_technician_by_pk"]["id"] == profile.id) {
+        setState(() {
+          isUpdate = true;
+        });
+      } else {
+        setState(() {
+          isUpdate = false;
+        });
+      }
+
+      //  logger.d(result.data?["update_technician_by_pk"]["id"]);
+
       if (result.hasException) {
         logger.d(result.exception!.graphqlErrors[0].message);
         setState(() {
           errMessage = result.exception!.graphqlErrors[0].message.toString();
-        });
-      }
-
-
-
-      if (result.data?["id"] == profile.id) {
-        setState(() {
-          isUpdate = true;
         });
       }
     } catch (err) {
@@ -205,7 +208,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
     }
   }
 
-  void _handleUpdate() {
+  void _handleUpdate() async {
     // logger.d(_userProfile.firstName);
     bool isValid = _formKey.currentState!.validate();
     if (isValid) {
@@ -214,20 +217,20 @@ class _UpdateProfileState extends State<UpdateProfile> {
         isLoading = true;
         errMessage = '';
       });
-      loadUpdate(_userProfile);
+      await loadUpdate(_userProfile);
 
+      logger.d(isUpdate);
       if (isUpdate) {
         showBar(const Text("Profile has been updated successfully."), "",
             Colors.green, () {
           // Some code to undo the change.
         });
       } else {
-        showBar(
-             Text(
-              errMessage
-            ),
-            errMessage,
-            Colors.red, () {
+        if (errMessage ==
+            'Uniqueness violation. duplicate key value violates unique constraint "users_phone_number_key"') {
+          errMessage = "Phone number already exist";
+        }
+        showBar(Text(errMessage), errMessage, Colors.red, () {
           // Some code to undo the change.
         });
       }
