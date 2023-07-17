@@ -17,7 +17,7 @@ import '../providers/job_list.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../widgets/carousel_card.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 
 class Home extends StatefulWidget {
   const Home({super.key});

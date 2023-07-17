@@ -15,6 +15,7 @@ import 'package:technician_rensys/services/main_service.dart';
 import '../models/profile.dart';
 import '../providers/page_index.dart';
 import '../providers/user_bank_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UpdateProfile extends StatefulWidget {
   const UpdateProfile({super.key});
@@ -262,7 +263,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
           },
           tooltip: "Go to home",
         ),
-        title: const Text("Update Profile"),
+        title:  Text(AppLocalizations.of(context)!.editProfile),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -316,8 +317,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
                             textInputAction: TextInputAction.next,
                             autofocus: true,
                             keyboardType: TextInputType.text,
-                            decoration: const InputDecoration(
-                              labelText: "First Name",
+                            decoration:  InputDecoration(
+                              labelText: AppLocalizations.of(context)!.firstName,
                               border: UnderlineInputBorder(),
                               enabledBorder: UnderlineInputBorder(),
                             ),
@@ -351,8 +352,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
                             initialValue: _userProfile.lastName,
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.next,
-                            decoration: const InputDecoration(
-                              labelText: "Last Name",
+                            decoration:  InputDecoration(
+                              labelText: AppLocalizations.of(context)!.lastName,
                               border: UnderlineInputBorder(),
                               enabledBorder: UnderlineInputBorder(),
                             ),
@@ -392,8 +393,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
                   textInputAction: TextInputAction.next,
                   initialValue: _userProfile.phoneNumber,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: "Phone Number",
+                  decoration:  InputDecoration(
+                    labelText: AppLocalizations.of(context)!.phoneNumber,
                     border: UnderlineInputBorder(),
                     enabledBorder: UnderlineInputBorder(),
                   ),
@@ -429,8 +430,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 TextFormField(
                   focusNode: bioNode,
                   initialValue: _userProfile.bio,
-                  decoration: const InputDecoration(
-                    labelText: "Bio",
+                  decoration:  InputDecoration(
+                    labelText: AppLocalizations.of(context)!.bio,
                     border: UnderlineInputBorder(),
                     enabledBorder: UnderlineInputBorder(),
                   ),
@@ -481,8 +482,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
                       child: Text(bank.name),
                     );
                   }).toList(),
-                  decoration: const InputDecoration(
-                    labelText: 'Choose your bank',
+                  decoration:  InputDecoration(
+                    labelText: AppLocalizations.of(context)!.chooseYourBank,
                   ),
                 ),
                 const SizedBox(
@@ -490,8 +491,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 ),
 
                 TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: "Account Number",
+                  decoration:  InputDecoration(
+                    labelText: AppLocalizations.of(context)!.accountNumber,
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
@@ -560,7 +561,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                 ),
                               ],
                             )
-                          : const Row(
+                          :  Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
@@ -571,7 +572,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                   width: 8,
                                 ),
                                 Text(
-                                  "Update",
+                                  AppLocalizations.of(context)!.update,
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 18),
                                 ),

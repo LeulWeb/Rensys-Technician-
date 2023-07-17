@@ -125,7 +125,9 @@ class _ProfileState extends State<Profile> {
                   children: [
                     Image.asset("assets/images/logo.png"),
                     Text(
-                      "Rensys Engineering & Trading PLC is an energy solution company based in Addis Ababa.  It was established with the aim of playing its role in providing renewable energy solutions for energy-deprived communities. Since its establishment, the company has electrified millions of lives through SHS, solar mini-grid, and solar lanterns.",
+                      overflow: TextOverflow.clip,
+                      maxLines: 5,
+                      AppLocalizations.of(context)!.rensysengineeringAbout,
                       style:
                           TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
                     ),
@@ -144,7 +146,7 @@ class _ProfileState extends State<Profile> {
                         SizedBox(
                           width: 2,
                         ),
-                        Text("8544 (Toll Free)"),
+                        Text("8544"),
                       ],
                     ),
                     Row(
@@ -165,7 +167,7 @@ class _ProfileState extends State<Profile> {
             ),
             actions: [
               TextButton(
-                child: Text('Close'),
+                child: Text(AppLocalizations.of(context)!.close),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -230,7 +232,9 @@ class _ProfileState extends State<Profile> {
           },
           tooltip: "Go to home",
         ),
-        title: const Text("Profile"),
+        title: Text(
+          AppLocalizations.of(context)!.profile,
+        ),
         actions: [
           PopupMenuButton(
             color: Color(0xffffffff),
@@ -245,7 +249,7 @@ class _ProfileState extends State<Profile> {
                       const SizedBox(
                         width: 12,
                       ),
-                      Text('Edit Profile'),
+                      Text(AppLocalizations.of(context)!.editProfile),
                     ],
                   ),
                   value: 'edit',
@@ -257,7 +261,7 @@ class _ProfileState extends State<Profile> {
                       const SizedBox(
                         width: 12,
                       ),
-                      Text('About Us'),
+                      Text(AppLocalizations.of(context)!.aboutUs),
                     ],
                   ),
                   value: 'about',
@@ -269,7 +273,7 @@ class _ProfileState extends State<Profile> {
                       const SizedBox(
                         width: 12,
                       ),
-                      Text('Logout'),
+                      Text(AppLocalizations.of(context)!.logOut),
                     ],
                   ),
                   value: 'logout',
@@ -411,14 +415,14 @@ class _ProfileState extends State<Profile> {
                                 height: 20,
                               ),
                               Text(
-                                "Jobs to Claim",
+                                AppLocalizations.of(context)!.jobToClaim,
                                 style: TextStyle(color: Colors.white),
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "Buy package",
+                                    AppLocalizations.of(context)!.buyPackage,
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   Align(
@@ -456,7 +460,9 @@ class _ProfileState extends State<Profile> {
                             const SizedBox(
                               height: 12,
                             ),
-                            Text("Completed Jobs")
+                            Text(
+                              AppLocalizations.of(context)!.completedJobs,
+                            )
                           ],
                         ),
                       ),
@@ -477,7 +483,7 @@ class _ProfileState extends State<Profile> {
                     color: Colors.white,
                     child: ExpansionTile(
                       subtitle: Text(
-                        "Account details",
+                        AppLocalizations.of(context)!.accountsDetail,
                         // style: TextStyle(color: Colors.white),
                       ),
                       iconColor: Colors.white,
@@ -487,7 +493,7 @@ class _ProfileState extends State<Profile> {
                         color: lightBlue,
                       ),
                       title: Text(
-                        "Bank accounts",
+                        AppLocalizations.of(context)!.bankAccounts,
                         style: TextStyle(fontSize: 16),
                       ),
                       children: List.generate(
@@ -524,7 +530,7 @@ class _ProfileState extends State<Profile> {
                       color: Colors.white,
                       child: ExpansionTile(
                         subtitle: Text(
-                          "Your location is used to filter nearby jobs",
+                          AppLocalizations.of(context)!.locationInfo,
                           style: TextStyle(
                               fontSize: 12, fontWeight: FontWeight.w300),
                         ),
@@ -535,7 +541,7 @@ class _ProfileState extends State<Profile> {
                           color: lightBlue,
                         ),
                         title: Text(
-                          "Location",
+                          AppLocalizations.of(context)!.location,
                           style: TextStyle(fontSize: 16),
                         ),
                         children: [
@@ -546,7 +552,9 @@ class _ProfileState extends State<Profile> {
                                 _showInMap(lattidue, longitude);
                               }
                             },
-                            child: Text("Location of user"),
+                            child: Text(
+                              AppLocalizations.of(context)!.locationUser,
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -559,7 +567,7 @@ class _ProfileState extends State<Profile> {
                                 color: Colors.blue,
                               ),
                               child: Text(
-                                "Track Location",
+                                AppLocalizations.of(context)!.trackLocation,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 18,
@@ -640,7 +648,7 @@ class _ProfileState extends State<Profile> {
                                 fontSize: 16),
                           ),
                           subtitle: Text(
-                            "Report a problem",
+                            AppLocalizations.of(context)!.reportProblem,
                             style: TextStyle(
                                 color: Color.fromARGB(255, 238, 102, 92),
                                 fontSize: 12),

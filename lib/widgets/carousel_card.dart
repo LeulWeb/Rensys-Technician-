@@ -32,8 +32,6 @@ class CarouselCard extends StatelessWidget {
                 Color(0xFF0d47a1),
                 Color(0xFF0d47a1),
                 Color(0xFF0d47a1),
-                Color.fromARGB(255, 25, 114, 192),
-                Color(0xFF0d47a1),
                 Color(0xFF0d47a1),
                 Color(0xFF0d47a1),
               ])),

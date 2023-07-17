@@ -6,6 +6,8 @@ import 'package:technician_rensys/widgets/empty.dart';
 import 'package:technician_rensys/widgets/text_app.dart';
 import 'package:provider/provider.dart';
 import '../widgets/job_card.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class Job extends StatefulWidget {
   const Job({super.key});
@@ -26,8 +28,8 @@ class _JobState extends State<Job> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Jobs",
+        title:  Text(
+          AppLocalizations.of(context)!.jobs,
         ),
       ),
       body: RefreshIndicator(
@@ -47,17 +49,17 @@ class _JobState extends State<Job> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const TextApp(
-                      title: "New nearby jobs",
+                     TextApp(
+                      title: AppLocalizations.of(context)!.newNearByJobs,
                       weight: FontWeight.normal,
                       size: 18,
                     ),
                     const SizedBox(
                       height: 12,
                     ),
-                    const TextApp(
+                     TextApp(
                       title:
-                          "Discover new nearby jobs and apply for maintenance jobs with ease.",
+                          AppLocalizations.of(context)!.jobsMessage,
                       weight: FontWeight.w200,
                       size: 16,
                     ),

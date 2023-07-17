@@ -3,9 +3,11 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:super_banners/super_banners.dart';
+import 'package:technician_rensys/providers/page_index.dart';
 import 'package:technician_rensys/services/main_service.dart';
 import 'package:technician_rensys/widgets/alert_box.dart';
 import 'package:technician_rensys/widgets/text_app.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../constants/colors.dart';
 import '../models/job.dart';
@@ -41,11 +43,12 @@ class _JobCardState extends State<JobCard> {
 
     if (claimResult!.data != null) {
       _showDialogBox(
-        title: "Success",
-        description: "The job is now in your queue.",
-        actionTitle: "Done",
+        title: AppLocalizations.of(context)!.success,
+        description: AppLocalizations.of(context)!.jobInQueue,
+        actionTitle: AppLocalizations.of(context)!.close,
         done: () {
           Navigator.of(context).pop();
+          PageIndex().navigateTo(1);
         },
       );
     }
@@ -142,8 +145,8 @@ class _JobCardState extends State<JobCard> {
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(
+                            children: [
+                              const Icon(
                                 Icons.handyman,
                                 color: Colors.white,
                                 weight: 500,
@@ -152,7 +155,7 @@ class _JobCardState extends State<JobCard> {
                                 width: 12,
                               ),
                               Text(
-                                "Fix It",
+                                AppLocalizations.of(context)!.fixIt,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,
